@@ -52,7 +52,7 @@ Public Class MainForm
     End Sub
 
     Function GetVideoName(url As String) As String
-        Return GetVideoInfo("--get-title", url, "Getting name of " & url)
+        Return GetVideoInfo("--get-title", url, "Getting name of " & url.Split("=").Last)
     End Function
 
     Function GetVideoThumbnail(url As String) As Bitmap
@@ -88,14 +88,18 @@ Public Class MainForm
     End Sub
 
     Sub RemoveVideoFromQueue(id As Integer)
-        Dim tmp As List(Of String) = VideoQueue.ToList
-        tmp.RemoveAt(id)
-        VideoQueue.Clear()
-        For Each st As String In tmp
-            VideoQueue.Enqueue(st)
-        Next
-        QueueBox.Items.RemoveAt(id)
-        QueueBox.Update()
+        If QueueBox.SelectedItems.Count > 0 Then
+            Dim tmp As List(Of String) = VideoQueue.ToList
+            tmp.RemoveAt(id)
+            VideoQueue.Clear()
+            For Each st As String In tmp
+                VideoQueue.Enqueue(st)
+            Next
+            QueueBox.Items.RemoveAt(id)
+            QueueBox.Update()
+        Else
+            RemoveSelectedToolStripMenuItem.Enabled = False
+        End If
     End Sub
 
     Sub UpdateDLButton()
@@ -166,7 +170,7 @@ Public Class MainForm
             CurDLProgress.Text = txt
             If txt IsNot Nothing Then
                 If txt.Contains("100%") Then
-                    DownloadDone(Nothing, Nothing)
+                    DownloadDone()
                 End If
             End If
         End If
@@ -192,7 +196,7 @@ Public Class MainForm
         RemoveVideoFromQueue(QueueBox.SelectedIndex)
     End Sub
 
-    Private Sub DownloadDone(sender As Object, e As EventArgs)
+    Private Sub DownloadDone(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing)
         '    _DownloadDone()
         'End Sub
         'Private Delegate Sub __DownloadDone()
@@ -206,12 +210,15 @@ Public Class MainForm
         CurDLNameLabel.Text = "No video downloading"
         CurDLCancel.Enabled = False
         CurDLProgress.Text = "####"
+        GetDownloadedVideos()
         DownloadNext()
         'End If
     End Sub
 
     Private Sub CurDLCancel_Click(sender As System.Object, e As System.EventArgs) Handles CurDLCancel.Click
         dldr.Kill()
+        CleanPartFiles()
+        DownloadDone()
     End Sub
 
     Private Sub DLQueuedVidsBtn_Click(sender As System.Object, e As System.EventArgs) Handles DLQueuedVidsBtn.Click
@@ -252,10 +259,10 @@ Public Class MainForm
         Return path.Split("\").Last
     End Function
 
-    Private Sub PlaySelectedVideo(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
-        If VideoList.SelectedItems.Count > 0 Then
-            Shell("""C:\Program Files (x86)\Windows Media Player\wmplayer.exe"" """ & LibraryLocation & "\" & VideoList.SelectedItems(0).Text & """")
-        End If
+    Private Sub PlaySelectedVideos(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
+        For Each itm As ListViewItem In VideoList.SelectedItems
+            Shell("""C:\Program Files (x86)\Windows Media Player\wmplayer.exe"" """ & LibraryLocation & "\" & itm.Text & """")
+        Next
     End Sub
 
     Private Sub ExitToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ExitToolStripMenuItem.Click
@@ -324,19 +331,19 @@ Public Class MainForm
         End If
     End Sub
 
-    Sub DeleteSelectedVideo()
-        If VideoList.SelectedItems.Count > 0 Then
+    Sub DeleteSelectedVideos()
+        Do Until VideoList.SelectedItems.Count = 0
             IO.File.Delete(LibraryLocation & "\" & VideoList.SelectedItems(0).Text)
             GetDownloadedVideos()
-        End If
+        Loop
     End Sub
 
     Private Sub LibrarySidebar_Click(ItmID As Integer) Handles LibrarySidebar.ItemClicked
         Select Case ItmID
             Case 1
-                PlaySelectedVideo()
+                PlaySelectedVideos()
             Case 2
-                DeleteSelectedVideo()
+                DeleteSelectedVideos()
             Case 3
                 OpenLibraryFolder()
         End Select
@@ -393,5 +400,13 @@ NextLine:
             Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
             AddMultipleVideos(lines)
         End If
+    End Sub
+
+    Sub CleanPartFiles()
+        For Each file As String In IO.Directory.EnumerateFiles(LibraryLocation)
+            If file.ToUpper.EndsWith("PART") Then
+                IO.File.Delete(file)
+            End If
+        Next
     End Sub
 End Class
