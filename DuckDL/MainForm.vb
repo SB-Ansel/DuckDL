@@ -24,7 +24,9 @@ Public Class MainForm
 
 #End Region
 
-    Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
+    Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
+    Public Const FORMAT_UNKNOWN As Integer = -1
+    Public Const FORMAT_BEST As Integer = -2
 
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
@@ -138,7 +140,7 @@ Public Class MainForm
             If UrlIsValid(url) And url.Contains("?v=") Then
                 url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
                 Dim fmt As Integer = PromptForFormat(url)
-                If fmt <> -1 Then AddVideoToQueue(CreateDownloadStruct(url, GetVideoName(url), fmt))
+                If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(CreateDownloadStruct(url, GetVideoName(url), fmt))
             Else
                 MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If
@@ -150,12 +152,27 @@ Public Class MainForm
     Dim curDL As VideoDownload
     Sub DownloadVideo(v2d As VideoDownload)
         curDL = v2d
+        Dim formatString As String = "DEADBEEF"
+        If curDL.Format = FORMAT_UNKNOWN Then
+            If MsgBox("No format was specified for this video: " & vbNewLine & curDL.Name & "Download anyway?", _
+                   MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation, "Warning!") = MsgBoxResult.Yes Then
+                formatString = ""
+            Else
+                Return
+            End If
+        End If
+        If curDL.Format = FORMAT_BEST Then
+            formatString = " -f best "
+        End If
+        If formatString = "DEADBEEF" Then
+            formatString = " -f " & CStr(curDL.Format) & " "
+        End If
         Downloading = True
         CurDLCancel.Enabled = True
         CurDLNameLabel.Text = "Downloading " & curDL.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
-        dldr.StartInfo.Arguments = " -f " & curDL.Format & " -c """ & curDL.Url & """"
+        dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """"
         dldr.StartInfo.UseShellExecute = False
         dldr.StartInfo.RedirectStandardOutput = True
         dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -304,7 +321,7 @@ Public Class MainForm
                 Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
                 Dim u As String = ""
                 Dim fmt As Integer = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
-                If fmt <> -1 Then
+                If fmt <> FORMAT_UNKNOWN Then
                     For Each vidID As String In vidIDs
                         vidID = vidID.Trim()
                         If vidID <> "" Then
@@ -384,7 +401,7 @@ Public Class MainForm
     Sub AddMultipleVideos(ByVal lines As String(), ByVal format As Integer)
         For Each line As String In lines
             If UrlIsValid(line) Then
-                AddVideoToQueue(CreateDownloadStruct(line, GetVideoName(line), -1))
+                AddVideoToQueue(CreateDownloadStruct(line, GetVideoName(line), format))
             Else
 ShowDlg:
                 Dim dlg As New Electroduck.Controls.CustomDialog
@@ -414,7 +431,7 @@ NextLine:
         tbd.Prompt = "Enter multiple video URLs, one per line:"
         If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
-            If fmt <> -1 Then AddMultipleVideos(tbd.Lines, fmt)
+            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(tbd.Lines, fmt)
         End If
     End Sub
 
@@ -422,7 +439,7 @@ NextLine:
         If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
             Dim fmt As Integer = PromptForFormat(lines(0))
-            If fmt <> -1 Then AddMultipleVideos(lines, fmt)
+            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(lines, fmt)
         End If
     End Sub
 
@@ -447,7 +464,7 @@ NextLine:
         If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
             Return dlg.SelectedFormat
         Else
-            Return -1
+            Return FORMAT_UNKNOWN
         End If
     End Function
 

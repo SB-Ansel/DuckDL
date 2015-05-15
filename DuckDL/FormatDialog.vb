@@ -13,10 +13,14 @@ Public Class FormatDialog
 
     Public ReadOnly Property SelectedFormat() As Integer
         Get
-            If FormatList.SelectedItems.Count = 0 Then
-                Return -1
+            If BestButton.Checked = True Then
+                Return MainForm.FORMAT_BEST
             Else
-                Return Formats(FormatList.SelectedIndex).Id
+                If FormatList.SelectedItems.Count = 0 Then
+                    Return MainForm.FORMAT_UNKNOWN
+                Else
+                    Return Formats(FormatList.SelectedIndex).Id
+                End If
             End If
         End Get
     End Property
@@ -71,4 +75,7 @@ Public Class FormatDialog
         Next
     End Sub
 
+    Private Sub BestButton_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles BestButton.CheckedChanged
+        FormatList.Enabled = Not BestButton.Checked
+    End Sub
 End Class
