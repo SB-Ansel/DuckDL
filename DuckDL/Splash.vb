@@ -26,7 +26,7 @@
         '
         '    Version.Text = System.String.Format(Version.Text, My.Application.Info.Version.Major, My.Application.Info.Version.Minor, My.Application.Info.Version.Build, My.Application.Info.Version.Revision)
 
-        Version.Text = System.String.Format(Version.Text, My.Application.Info.Version.Major, My.Application.Info.Version.Minor)
+        Version.Text = System.String.Format(Version.Text, My.Application.Info.Version)
 
         'Copyright info - {0} on the control is replaced with the copyright text
         Copyright.Text = System.String.Format(Copyright.Text, My.Application.Info.Copyright)

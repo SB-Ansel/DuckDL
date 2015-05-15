@@ -28,14 +28,20 @@ Public Class MainForm
 
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
-    Dim VideoQueue As New Queue(Of String)
+    Dim VideoQueue As New Queue(Of VideoDownload)
     Dim Downloading As Boolean = False
     Dim DLingQueued As Boolean = False
 
+    Structure VideoDownload
+        Dim Url As String
+        Dim Name As String
+        Dim Format As Integer
+    End Structure
 
     Private Icn_Download As Bitmap = My.Resources.icn_arrow_down
     Private Icn_Delete As Bitmap = My.Resources.icn_x
     Private Icn_Film As Bitmap = My.Resources.icn_film
+    Private Icn_Sound As Bitmap = My.Resources.icn_sound
 
     Private Sub MainForm_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         If System.IO.File.Exists(LibraryLocation) Then System.IO.File.Delete(LibraryLocation)
@@ -71,9 +77,9 @@ Public Class MainForm
         Return New Bitmap(tmp)
     End Function
 
-    Sub AddVideoToQueue(v2d As String)
+    Sub AddVideoToQueue(v2d As VideoDownload)
         VideoQueue.Enqueue(v2d)
-        QueueBox.Items.Add(GetVideoName(v2d))
+        QueueBox.Items.Add(v2d.Name)
         QueueBox.Update()
         UpdateDLButton()
     End Sub
@@ -89,10 +95,10 @@ Public Class MainForm
 
     Sub RemoveVideoFromQueue(id As Integer)
         If QueueBox.SelectedItems.Count > 0 Then
-            Dim tmp As List(Of String) = VideoQueue.ToList
+            Dim tmp As List(Of VideoDownload) = VideoQueue.ToList
             tmp.RemoveAt(id)
             VideoQueue.Clear()
-            For Each st As String In tmp
+            For Each st As VideoDownload In tmp
                 VideoQueue.Enqueue(st)
             Next
             QueueBox.Items.RemoveAt(id)
@@ -129,8 +135,10 @@ Public Class MainForm
     Private Sub DownloadVideoToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles DownloadVideoToolStripMenuItem.Click
         Dim url As String = InputBox("Enter the URL of the video you want to download:", "Download Video")
         If url <> "" Then
-            If UrlIsValid(url) Then
-                AddVideoToQueue(url)
+            If UrlIsValid(url) And url.Contains("?v=") Then
+                url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
+                Dim fmt As Integer = PromptForFormat(url)
+                If fmt <> -1 Then AddVideoToQueue(CreateDownloadStruct(url, GetVideoName(url), fmt))
             Else
                 MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If
@@ -139,13 +147,13 @@ Public Class MainForm
     End Sub
 
     Dim dldr As Process
-    Sub DownloadVideo(v2d As String)
+    Sub DownloadVideo(v2d As VideoDownload)
         Downloading = True
         CurDLCancel.Enabled = True
-        CurDLNameLabel.Text = "Downloading " & GetVideoName(v2d)
+        CurDLNameLabel.Text = "Downloading " & v2d.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
-        dldr.StartInfo.Arguments = " -c """ & v2d & """"
+        dldr.StartInfo.Arguments = " -f " & v2d.Format & " -c """ & v2d.Url & """"
         dldr.StartInfo.UseShellExecute = False
         dldr.StartInfo.RedirectStandardOutput = True
         dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -156,7 +164,7 @@ Public Class MainForm
         dldr.BeginOutputReadLine()
     End Sub
 
-
+    Dim DownloadLog As String = ""
     Private Sub DLProgressUpdate(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         _DLProgressUpdate(e.Data)
     End Sub
@@ -167,9 +175,10 @@ Public Class MainForm
             Dim args As Object() = {txt}
             Me.Invoke(del, args)
         Else
-            CurDLProgress.Text = txt
+            DownloadLog &= txt & vbNewLine
+            If txt <> "" Then CurDLProgress.Text = txt
             If txt IsNot Nothing Then
-                If txt.Contains("100%") Then
+                If txt.Contains("100%") Or dldr.HasExited Or txt = "" Then
                     DownloadDone()
                 End If
             End If
@@ -243,13 +252,17 @@ Public Class MainForm
         Dim idx As Integer = 0
         Dim url As String
         VideoList.Clear()
+        VideoIconList.Images.Clear()
         For Each vid As String In vids
-            If vid.ToUpper.EndsWith("MP4") Then
+            If vid.ToUpper.EndsWith("MP4") Or vid.ToUpper.EndsWith("FLV") Or vid.ToUpper.EndsWith("WEBM") _
+                Or vid.ToUpper.EndsWith("3GP") Then
                 VideoList.Items.Add(FileNameFromPath(vid), idx)
-                'hImgLarge = SHGetFileInfo(vid, 0, shinfo, Marshal.SizeOf(shinfo), SHGFI_ICON Or SHGFI_LARGEICON)
                 VideoIconList.Images.Add(Icn_Film)
                 url = String.Format(YT_URL_FORMAT, vid.Split("-").Last.Split(".")(0))
-                'VideoIconList.Images.Add(idx, GetVideoThumbnail(url))
+                idx += 1
+            ElseIf vid.ToUpper.EndsWith("M4A") Then
+                VideoList.Items.Add(FileNameFromPath(vid), idx)
+                VideoIconList.Images.Add(Icn_Sound)
                 idx += 1
             End If
         Next
@@ -261,7 +274,7 @@ Public Class MainForm
 
     Private Sub PlaySelectedVideos(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
         For Each itm As ListViewItem In VideoList.SelectedItems
-            Shell("""C:\Program Files (x86)\Windows Media Player\wmplayer.exe"" """ & LibraryLocation & "\" & itm.Text & """")
+            Process.Start(LibraryLocation & "\" & itm.Text)
         Next
     End Sub
 
@@ -277,7 +290,7 @@ Public Class MainForm
     End Sub
 
     Private Sub OpenLibraryFolder(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles OpenLibraryToolStripMenuItem.Click
-        Shell("explorer.exe """ & LibraryLocation & """")
+        Process.Start(LibraryLocation)
     End Sub
 
     Private Sub DownloadPlaylistToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
@@ -285,12 +298,17 @@ Public Class MainForm
         If url <> "" Then
             If UrlIsValid(url) Then
                 Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
-                For Each vidID As String In vidIDs
-                    vidID = vidID.Trim()
-                    If vidID <> "" Then
-                        AddVideoToQueue(String.Format(YT_URL_FORMAT, vidID))
-                    End If
-                Next
+                Dim u As String = ""
+                Dim fmt As Integer = PromptForFormat(vidIDs(0).Trim)
+                If fmt <> -1 Then
+                    For Each vidID As String In vidIDs
+                        vidID = vidID.Trim()
+                        If vidID <> "" Then
+                            u = String.Format(YT_URL_FORMAT, vidID)
+                            AddVideoToQueue(CreateDownloadStruct(u, GetVideoName(u), -1))
+                        End If
+                    Next
+                End If
             Else
                 MsgBox("Invalid playlist URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If
@@ -359,10 +377,10 @@ Public Class MainForm
         Cancel = 2
     End Enum
 
-    Sub AddMultipleVideos(ByVal lines As String())
+    Sub AddMultipleVideos(ByVal lines As String(), ByVal format As Integer)
         For Each line As String In lines
             If UrlIsValid(line) Then
-                AddVideoToQueue(line)
+                AddVideoToQueue(CreateDownloadStruct(line, GetVideoName(line), -1))
             Else
 ShowDlg:
                 Dim dlg As New Electroduck.Controls.CustomDialog
@@ -391,14 +409,16 @@ NextLine:
         tbd.Title = "Download Multiple"
         tbd.Prompt = "Enter multiple video URLs, one per line:"
         If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            AddMultipleVideos(tbd.Lines)
+            Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
+            If fmt <> -1 Then AddMultipleVideos(tbd.Lines, fmt)
         End If
     End Sub
 
     Private Sub OpenFileOfURLsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
         If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
-            AddMultipleVideos(lines)
+            Dim fmt As Integer = PromptForFormat(lines(0))
+            If fmt <> -1 Then AddMultipleVideos(lines, fmt)
         End If
     End Sub
 
@@ -409,4 +429,21 @@ NextLine:
             End If
         Next
     End Sub
+
+    Public Shared Function CreateDownloadStruct(ByVal url As String, ByVal name As String, ByVal format As Integer) As VideoDownload
+        Dim struct As New VideoDownload
+        struct.Url = url
+        struct.Name = name
+        struct.Format = format
+        Return struct
+    End Function
+
+    Public Shared Function PromptForFormat(ByVal url As String) As Integer
+        Dim dlg As New FormatDialog(url)
+        If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
+            Return dlg.SelectedFormat
+        Else
+            Return -1
+        End If
+    End Function
 End Class
