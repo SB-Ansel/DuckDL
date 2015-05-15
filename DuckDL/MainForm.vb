@@ -147,13 +147,15 @@ Public Class MainForm
     End Sub
 
     Dim dldr As Process
+    Dim curDL As VideoDownload
     Sub DownloadVideo(v2d As VideoDownload)
+        curDL = v2d
         Downloading = True
         CurDLCancel.Enabled = True
-        CurDLNameLabel.Text = "Downloading " & v2d.Name
+        CurDLNameLabel.Text = "Downloading " & curDL.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
-        dldr.StartInfo.Arguments = " -f " & v2d.Format & " -c """ & v2d.Url & """"
+        dldr.StartInfo.Arguments = " -f " & curDL.Format & " -c """ & curDL.Url & """"
         dldr.StartInfo.UseShellExecute = False
         dldr.StartInfo.RedirectStandardOutput = True
         dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -162,6 +164,7 @@ Public Class MainForm
         'AddHandler dldr.Exited, AddressOf DownloadDone         DOESN'T WORK no fking idea
         dldr.Start()
         dldr.BeginOutputReadLine()
+        LifeCheck.Enabled = True
     End Sub
 
     Dim DownloadLog As String = ""
@@ -178,7 +181,7 @@ Public Class MainForm
             DownloadLog &= txt & vbNewLine
             If txt <> "" Then CurDLProgress.Text = txt
             If txt IsNot Nothing Then
-                If txt.Contains("100%") Or dldr.HasExited Or txt = "" Then
+                If txt.Contains("100%") Then
                     DownloadDone()
                 End If
             End If
@@ -216,6 +219,7 @@ Public Class MainForm
         '        Me.Invoke(done, args)
         '    Else
         Downloading = False
+        LifeCheck.Enabled = False
         CurDLNameLabel.Text = "No video downloading"
         CurDLCancel.Enabled = False
         CurDLProgress.Text = "####"
@@ -299,13 +303,13 @@ Public Class MainForm
             If UrlIsValid(url) Then
                 Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
                 Dim u As String = ""
-                Dim fmt As Integer = PromptForFormat(vidIDs(0).Trim)
+                Dim fmt As Integer = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
                 If fmt <> -1 Then
                     For Each vidID As String In vidIDs
                         vidID = vidID.Trim()
                         If vidID <> "" Then
                             u = String.Format(YT_URL_FORMAT, vidID)
-                            AddVideoToQueue(CreateDownloadStruct(u, GetVideoName(u), -1))
+                            AddVideoToQueue(CreateDownloadStruct(u, GetVideoName(u), fmt))
                         End If
                     Next
                 End If
@@ -352,7 +356,7 @@ Public Class MainForm
     Sub DeleteSelectedVideos()
         Do Until VideoList.SelectedItems.Count = 0
             IO.File.Delete(LibraryLocation & "\" & VideoList.SelectedItems(0).Text)
-            GetDownloadedVideos()
+            VideoList.SelectedItems(0).Remove()
         Loop
     End Sub
 
@@ -446,4 +450,12 @@ NextLine:
             Return -1
         End If
     End Function
+
+    Private Sub LifeCheck_Tick(sender As System.Object, e As System.EventArgs) Handles LifeCheck.Tick
+        If dldr.HasExited Then
+            LifeCheck.Enabled = False
+            MsgBox("Failed to download video: " & vbNewLine & curDL.Name & vbNewLine & curDL.Url & vbNewLine & "In format: " & curDL.Format, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "Error")
+            DownloadDone()
+        End If
+    End Sub
 End Class
