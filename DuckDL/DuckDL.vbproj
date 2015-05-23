@@ -83,6 +83,9 @@
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Electroduck Controls, Version=1.0.5279.14412, Culture=neutral, PublicKeyToken=06ac0a55d05d1bfe, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -222,6 +225,8 @@
     <None Include="Resources\pencil.png" />
     <None Include="Resources\film_go.png" />
     <None Include="Resources\music.png" />
+    <Content Include="Resources\icon.ico" />
+    <Content Include="Resources\icon.png" />
     <Content Include="youtube-dl.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
