@@ -172,7 +172,7 @@ Public Class MainForm
         CurDLNameLabel.Text = "Downloading " & curDL.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
-        dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """"
+        dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """ -o ""%(title)s.%(format_id)s.%(id)s.%(ext)s"""
         dldr.StartInfo.UseShellExecute = False
         dldr.StartInfo.RedirectStandardOutput = True
         dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -377,6 +377,14 @@ Public Class MainForm
         Loop
     End Sub
 
+    Sub RedownloadSelectedVideo()
+        If VideoList.SelectedItems.Count > 0 Then
+            Dim dl As VideoDownload = CreateDownloadStructFromFilename(VideoList.SelectedItems(0).Text)
+            dl.Format = PromptForFormat(dl.Url)
+            If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+        End If
+    End Sub
+
     Private Sub LibrarySidebar_Click(ItmID As Integer) Handles LibrarySidebar.ItemClicked
         Select Case ItmID
             Case 1
@@ -385,6 +393,8 @@ Public Class MainForm
                 DeleteSelectedVideos()
             Case 3
                 OpenLibraryFolder()
+            Case 4
+                RedownloadSelectedVideo()
         End Select
     End Sub
 
@@ -475,4 +485,18 @@ NextLine:
             DownloadDone()
         End If
     End Sub
+
+    Function CreateDownloadStructFromFilename(ByVal fName As String) As VideoDownload
+        Dim fPieces() As String = fName.Split("."c)
+        Dim ret As New VideoDownload
+        ret.Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
+        ret.Format = fPieces(fPieces.Count - 3)
+        ret.Name = ""
+        For i As Integer = 0 To fPieces.Count - 4
+            ret.Name &= fPieces(i) & "."
+        Next
+        If ret.Name.Length > 1 Then ret.Name = ret.Name.Remove(ret.Name.Length - 1)
+        Return ret
+    End Function
+
 End Class
