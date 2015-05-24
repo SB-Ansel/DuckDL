@@ -276,7 +276,7 @@ Public Class MainForm
         VideoIconList.Images.Clear()
         For Each vid As String In vids
             If vid.ToUpper.EndsWith("MP4") Or vid.ToUpper.EndsWith("FLV") Or vid.ToUpper.EndsWith("WEBM") _
-                Or vid.ToUpper.EndsWith("3GP") Then
+                Or vid.ToUpper.EndsWith("3GP") Or vid.ToUpper.EndsWith("AVI") Then
                 VideoList.Items.Add(FileNameFromPath(vid), idx)
                 VideoIconList.Images.Add(Icn_Film)
                 url = String.Format(YT_URL_FORMAT, vid.Split("-").Last.Split(".")(0))
@@ -291,6 +291,16 @@ Public Class MainForm
 
     Function FileNameFromPath(ByVal path As String) As String
         Return path.Split("\").Last
+    End Function
+
+    Function RemoveExtension(ByVal fname As String) As String
+        Dim ret As String = ""
+        Dim fpieces() As String = fname.Split("."c)
+        For Each fpiece As String In fpieces
+            ret &= fpiece & "."
+        Next
+        ret = ret.Remove(ret.Length - 1)
+        Return ret
     End Function
 
     Private Sub PlaySelectedVideos(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
@@ -379,10 +389,23 @@ Public Class MainForm
 
     Sub RedownloadSelectedVideo()
         If VideoList.SelectedItems.Count > 0 Then
-            Dim dl As VideoDownload = CreateDownloadStructFromFilename(VideoList.SelectedItems(0).Text)
-            dl.Format = PromptForFormat(dl.Url)
-            If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+            Dim fname As String = VideoList.SelectedItems(0).Text
+            Dim fpieces() As String = fname.Split("."c)
+            If fpieces.Count > 3 Then
+                If IsNumeric(fpieces(fpieces.Count - 3)) Then
+                    Dim dl As VideoDownload = CreateDownloadStructFromFilename(VideoList.SelectedItems(0).Text)
+                    dl.Format = PromptForFormat(dl.Url)
+                    If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+                Else
+                    GoTo cannot
+                End If
+            Else
+                GoTo cannot
+            End If
         End If
+        Return
+cannot:
+        MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
     End Sub
 
     Private Sub LibrarySidebar_Click(ItmID As Integer) Handles LibrarySidebar.ItemClicked

@@ -377,7 +377,7 @@ Partial Class MainForm
         '
         'AddFileDialog
         '
-        Me.AddFileDialog.Filter = "MP4 Videos|*.mp4"
+        Me.AddFileDialog.Filter = "Media files|*.mp4;*.flv;*.webm;*.3gp;*.avi;*.m4a"
         Me.AddFileDialog.Title = "Add video to Library"
         '
         'OpenURLListDialog
