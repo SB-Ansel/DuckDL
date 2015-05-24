@@ -10,6 +10,8 @@ File "Electroduck Controls.dll"
 File DuckDL\bin\Release\DuckDL.exe
 File DuckDL\youtube-dl.exe
 File LICENSE.txt
+File /r MPC-HC
+WriteRegStr HKLM "Software\Electroduck\DuckDL" "PLAYER" $INSTDIR\MPC-HC\mpc-hc.exe
 WriteUninstaller $INSTDIR\Uninstall.exe
 CreateDirectory $SMPROGRAMS\Electroduck\DuckDL
 CreateShortCut "$SMPROGRAMS\Electroduck\DuckDL.lnk" "$INSTDIR\DuckDL.exe"

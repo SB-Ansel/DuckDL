@@ -305,7 +305,7 @@ Public Class MainForm
 
     Private Sub PlaySelectedVideos(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
         For Each itm As ListViewItem In VideoList.SelectedItems
-            Process.Start(LibraryLocation & "\" & itm.Text)
+            PlayVideo(LibraryLocation & "\" & itm.Text)
         Next
     End Sub
 
@@ -521,5 +521,14 @@ NextLine:
         If ret.Name.Length > 1 Then ret.Name = ret.Name.Remove(ret.Name.Length - 1)
         Return ret
     End Function
+
+    Sub PlayVideo(ByVal path As String)
+        Dim player As String = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\Software\Electroduck\DuckDL", "PLAYER", "")
+        If player = "" And IO.File.Exists(player) Then
+            Process.Start(path)
+        Else
+            Process.Start(player, """" & path & """")
+        End If
+    End Sub
 
 End Class
