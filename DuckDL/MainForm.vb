@@ -107,6 +107,7 @@ Public Class MainForm
             QueueBox.Update()
         Else
             RemoveSelectedToolStripMenuItem.Enabled = False
+            ClearAllToolStripMenuItem.Enabled = False
         End If
     End Sub
 
@@ -114,8 +115,10 @@ Public Class MainForm
         If VideoQueue.Count = 0 Then
             DLingQueued = False
             RemoveSelectedToolStripMenuItem.Enabled = False
+            ClearAllToolStripMenuItem.Enabled = False
         Else
             RemoveSelectedToolStripMenuItem.Enabled = True
+            ClearAllToolStripMenuItem.Enabled = True
         End If
         If DLingQueued Then
             DLQueuedVidsBtn.Enabled = True
@@ -531,4 +534,8 @@ NextLine:
         End If
     End Sub
 
+    Private Sub ClearAllToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ClearAllToolStripMenuItem.Click
+        QueueBox.Items.Clear()
+        QueueBox.Update()
+    End Sub
 End Class

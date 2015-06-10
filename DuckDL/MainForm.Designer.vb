@@ -56,6 +56,7 @@ Partial Class MainForm
         Me.AddFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.OpenURLListDialog = New System.Windows.Forms.OpenFileDialog()
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
+        Me.ClearAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
@@ -123,8 +124,8 @@ Partial Class MainForm
         '
         Me.DownloadPlaylistToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
         Me.DownloadPlaylistToolStripMenuItem.Name = "DownloadPlaylistToolStripMenuItem"
-        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
-        Me.DownloadPlaylistToolStripMenuItem.Text = "Download Playlist"
+        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(229, 22)
+        Me.DownloadPlaylistToolStripMenuItem.Text = "Download Playlist or Channel"
         '
         'DownloadFromListToolStripMenuItem
         '
@@ -304,9 +305,9 @@ Partial Class MainForm
         '
         'QueueMenu
         '
-        Me.QueueMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveSelectedToolStripMenuItem})
+        Me.QueueMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveSelectedToolStripMenuItem, Me.ClearAllToolStripMenuItem})
         Me.QueueMenu.Name = "QueueMenu"
-        Me.QueueMenu.Size = New System.Drawing.Size(165, 26)
+        Me.QueueMenu.Size = New System.Drawing.Size(165, 48)
         '
         'RemoveSelectedToolStripMenuItem
         '
@@ -388,6 +389,13 @@ Partial Class MainForm
         'LifeCheck
         '
         '
+        'ClearAllToolStripMenuItem
+        '
+        Me.ClearAllToolStripMenuItem.ForeColor = System.Drawing.Color.Red
+        Me.ClearAllToolStripMenuItem.Name = "ClearAllToolStripMenuItem"
+        Me.ClearAllToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.ClearAllToolStripMenuItem.Text = "Clear All"
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -449,5 +457,6 @@ Partial Class MainForm
     Friend WithEvents OpenFileOfURLsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenURLListDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents LifeCheck As System.Windows.Forms.Timer
+    Friend WithEvents ClearAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class
