@@ -29,6 +29,7 @@ Public Class MainForm
     Public Const FORMAT_BEST As Integer = -2
 
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
+    Public Shared ReadOnly QueueLocation As String = LibraryLocation & "\_q.ddq"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
     Dim VideoQueue As New Queue(Of VideoDownload)
     Dim Downloading As Boolean = False
@@ -113,10 +114,16 @@ Public Class MainForm
     Private Icn_Sound As Bitmap = My.Resources.icn_sound
 
     Private Sub MainForm_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
+        ' If there is a FILE (not a dir) which occupies the library location, delete it
         If System.IO.File.Exists(LibraryLocation) Then System.IO.File.Delete(LibraryLocation)
+        ' Create library dir
         If Not System.IO.Directory.Exists(LibraryLocation) Then System.IO.Directory.CreateDirectory(LibraryLocation)
         Me.Text = My.Application.Info.ProductName
         QueueBox.Items.Clear()
+        ' Load queue from last session
+        If IO.File.Exists(QueueLocation) Then
+            LoadQueue(QueueLocation)
+        End If
         'CurDLProgress.Value = 0
         'CurDLProgress.Enabled = False
         CurDLNameLabel.Text = "No video downloading"
@@ -124,6 +131,10 @@ Public Class MainForm
         CurDLCancel.Enabled = False
         UpdateDLButton()
         GetDownloadedVideos()
+    End Sub
+
+    Private Sub MainForm_Closing(sender As Object, e As Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
+        SaveQueue(QueueLocation)
     End Sub
 
     Function GetVideoName(url As String) As String

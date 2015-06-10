@@ -203,7 +203,7 @@ Partial Class MainForm
         '
         Me.QueueMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveSelectedToolStripMenuItem, Me.ClearAllToolStripMenuItem, Me.SaveQueueToolStripMenuItem, Me.LoadQueueToolStripMenuItem})
         Me.QueueMenu.Name = "QueueMenu"
-        Me.QueueMenu.Size = New System.Drawing.Size(165, 114)
+        Me.QueueMenu.Size = New System.Drawing.Size(165, 92)
         '
         'CurDLPanel
         '
