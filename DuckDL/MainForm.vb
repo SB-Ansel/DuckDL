@@ -61,6 +61,36 @@ Public Class MainForm
             Return Url & ";" & Name & ";" & CStr(Format)
         End Function
 
+        Public Sub New()
+            _url = ""
+            _name = ""
+            Format = 0
+        End Sub
+
+        Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As Integer)
+            Url = __url
+            Name = __name
+            Format = __format
+        End Sub
+
+        Public Sub New(ByVal fName As String)
+            Dim fPieces() As String = fName.Split("."c)
+            If fPieces.Count < 4 Then
+                Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
+            End If
+            Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
+            Dim _format As String = fPieces(fPieces.Count - 3)
+            If Not IsNumeric(_format) Then
+                Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
+            End If
+            Format = CInt(_format)
+            Name = ""
+            For i As Integer = 0 To fPieces.Count - 4
+                Name &= fPieces(i) & "."
+            Next
+            If Name.Length > 1 Then Name = Name.Remove(Name.Length - 1)
+        End Sub
+
         Public Shared Function FromString(ByVal s As String) As VideoDownload
             Dim sPcs() As String = s.Split(";"c)
             Dim vd As New VideoDownload
@@ -182,7 +212,7 @@ Public Class MainForm
             If UrlIsValid(url) And url.Contains("?v=") Then
                 url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
                 Dim fmt As Integer = PromptForFormat(url)
-                If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(CreateDownloadStruct(url, GetVideoName(url), fmt))
+                If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(New VideoDownload(url, GetVideoName(url), fmt))
             Else
                 MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If
@@ -378,7 +408,7 @@ Public Class MainForm
                         vidID = vidID.Trim()
                         If vidID <> "" Then
                             u = String.Format(YT_URL_FORMAT, vidID)
-                            AddVideoToQueue(CreateDownloadStruct(u, GetVideoName(u), fmt))
+                            AddVideoToQueue(New VideoDownload(u, GetVideoName(u), fmt))
                         End If
                     Next
                 End If
@@ -435,9 +465,13 @@ Public Class MainForm
             Dim fpieces() As String = fname.Split("."c)
             If fpieces.Count > 3 Then
                 If IsNumeric(fpieces(fpieces.Count - 3)) Then
-                    Dim dl As VideoDownload = CreateDownloadStructFromFilename(VideoList.SelectedItems(0).Text)
-                    dl.Format = PromptForFormat(dl.Url)
-                    If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+                    Try
+                        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+                        dl.Format = PromptForFormat(dl.Url)
+                        If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+                    Catch ex As Exception
+                        GoTo cannot
+                    End Try
                 Else
                     GoTo cannot
                 End If
@@ -476,7 +510,7 @@ cannot:
     Sub AddMultipleVideos(ByVal lines As String(), ByVal format As Integer)
         For Each line As String In lines
             If UrlIsValid(line) Then
-                AddVideoToQueue(CreateDownloadStruct(line, GetVideoName(line), format))
+                AddVideoToQueue(New VideoDownload(line, GetVideoName(line), format))
             Else
 ShowDlg:
                 Dim dlg As New Electroduck.Controls.CustomDialog
@@ -526,13 +560,6 @@ NextLine:
         Next
     End Sub
 
-    Public Shared Function CreateDownloadStruct(ByVal url As String, ByVal name As String, ByVal format As Integer) As VideoDownload
-        Dim struct As New VideoDownload
-        struct.Url = url
-        struct.Name = name
-        struct.Format = format
-        Return struct
-    End Function
 
     Public Shared Function PromptForFormat(ByVal url As String) As Integer
         Dim dlg As New FormatDialog(url)
@@ -550,19 +577,6 @@ NextLine:
             DownloadDone()
         End If
     End Sub
-
-    Function CreateDownloadStructFromFilename(ByVal fName As String) As VideoDownload
-        Dim fPieces() As String = fName.Split("."c)
-        Dim ret As New VideoDownload
-        ret.Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
-        ret.Format = fPieces(fPieces.Count - 3)
-        ret.Name = ""
-        For i As Integer = 0 To fPieces.Count - 4
-            ret.Name &= fPieces(i) & "."
-        Next
-        If ret.Name.Length > 1 Then ret.Name = ret.Name.Remove(ret.Name.Length - 1)
-        Return ret
-    End Function
 
     Sub PlayVideo(ByVal path As String)
         Dim player As String = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\Software\Electroduck\DuckDL", "PLAYER", "")
