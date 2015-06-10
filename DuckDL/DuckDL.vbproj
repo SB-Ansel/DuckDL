@@ -225,6 +225,8 @@
     <None Include="Resources\pencil.png" />
     <None Include="Resources\film_go.png" />
     <None Include="Resources\music.png" />
+    <None Include="Resources\disk.png" />
+    <None Include="Resources\folder_table.png" />
     <Content Include="Resources\icon.ico" />
     <Content Include="Resources\icon.png" />
     <Content Include="youtube-dl.exe">

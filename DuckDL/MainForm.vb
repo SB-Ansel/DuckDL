@@ -2,7 +2,7 @@
 Imports System.Runtime.InteropServices
 
 Public Class MainForm
-#Region "File Icons"
+#Region "File Icons (DEFUNCT)"
     'Private Structure SHFILEINFO
     '    Public hIcon As IntPtr ' : icon
     '    Public iIcon As Integer ' : icondex
@@ -34,11 +34,48 @@ Public Class MainForm
     Dim Downloading As Boolean = False
     Dim DLingQueued As Boolean = False
 
-    Structure VideoDownload
-        Dim Url As String
-        Dim Name As String
-        Dim Format As Integer
-    End Structure
+    Class VideoDownload
+        Private _url As String
+        Public Property Url As String
+            Get
+                Return _url
+            End Get
+            Set(value As String)
+                _url = value.Replace(";"c, "_"c).Trim
+            End Set
+        End Property
+
+        Private _name As String
+        Public Property Name As String
+            Get
+                Return _name
+            End Get
+            Set(value As String)
+                _name = value.Replace(";"c, "_"c).Trim
+            End Set
+        End Property
+
+        Public Format As Integer
+
+        Public Overrides Function ToString() As String
+            Return Url & ";" & Name & ";" & CStr(Format)
+        End Function
+
+        Public Shared Function FromString(ByVal s As String) As VideoDownload
+            Dim sPcs() As String = s.Split(";"c)
+            Dim vd As New VideoDownload
+            If sPcs.Count <> 3 Then
+                Throw New ArgumentException("Input string is not a download entry (semicolon ct. =/= 2).", s)
+            End If
+            If Not IsNumeric(sPcs(2)) Then
+                Throw New ArgumentOutOfRangeException("s.split(';')[2]", sPcs(2), "Format part of download entry is not a number.")
+            End If
+            vd.Url = sPcs(0)
+            vd.Name = sPcs(1)
+            vd.Format = CInt(sPcs(2))
+            Return vd
+        End Function
+    End Class
 
     Private Icn_Download As Bitmap = My.Resources.icn_arrow_down
     Private Icn_Delete As Bitmap = My.Resources.icn_x
@@ -116,9 +153,11 @@ Public Class MainForm
             DLingQueued = False
             RemoveSelectedToolStripMenuItem.Enabled = False
             ClearAllToolStripMenuItem.Enabled = False
+            SaveQueueToolStripMenuItem.Enabled = False
         Else
             RemoveSelectedToolStripMenuItem.Enabled = True
             ClearAllToolStripMenuItem.Enabled = True
+            SaveQueueToolStripMenuItem.Enabled = True
         End If
         If DLingQueued Then
             DLQueuedVidsBtn.Enabled = True
@@ -537,5 +576,47 @@ NextLine:
     Private Sub ClearAllToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ClearAllToolStripMenuItem.Click
         QueueBox.Items.Clear()
         QueueBox.Update()
+    End Sub
+
+    Sub SaveQueue(ByVal savepath As String)
+        Dim f As IO.StreamWriter = My.Computer.FileSystem.OpenTextFileWriter(savepath, False)
+        For Each dl As VideoDownload In VideoQueue
+            f.WriteLine(dl.ToString)
+        Next
+        f.Close()
+    End Sub
+
+    Sub LoadQueue(ByVal loadpath As String)
+        Dim f As IO.StreamReader = My.Computer.FileSystem.OpenTextFileReader(loadpath)
+        Dim line As String = f.ReadLine
+        While line IsNot Nothing
+attempt_line:
+            Try
+                AddVideoToQueue(VideoDownload.FromString(line))
+            Catch ex As Exception
+                Dim action As MsgBoxResult = MsgBox("Error reading queue file:" & vbNewLine & ex.ToString, _
+                          MsgBoxStyle.Exclamation + MsgBoxStyle.AbortRetryIgnore, "Error reading queue")
+                If action = MsgBoxResult.Abort Then
+                    Return
+                ElseIf action = MsgBoxResult.Retry Then
+                    GoTo attempt_line
+                Else
+                    ' Next line
+                End If
+            End Try
+            line = f.ReadLine
+        End While
+    End Sub
+
+    Private Sub LoadQueueToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles LoadQueueToolStripMenuItem.Click
+        If OpenQueueDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            LoadQueue(OpenQueueDialog.FileName)
+        End If
+    End Sub
+
+    Private Sub SaveQueueToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles SaveQueueToolStripMenuItem.Click
+        If SaveQueueDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
+            SaveQueue(SaveQueueDialog.FileName)
+        End If
     End Sub
 End Class

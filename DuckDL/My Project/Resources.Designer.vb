@@ -123,6 +123,16 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property icn_folder_table() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("icn_folder_table", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property icn_page_white() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icn_page_white", resourceCulture)
@@ -166,6 +176,16 @@ Namespace My.Resources
         Friend ReadOnly Property icon() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icon", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property icon_disk() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("icon_disk", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

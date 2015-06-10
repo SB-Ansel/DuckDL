@@ -26,37 +26,41 @@ Partial Class MainForm
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.MainMenu = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.AddVideoFromFileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.OpenLibraryToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DownloadingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DownloadVideoToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DownloadPlaylistToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DownloadFromListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.EnterInMultipleURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.OpenFileOfURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MainSplitter = New System.Windows.Forms.SplitContainer()
         Me.VideoListLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me.VideoActionsLabel = New System.Windows.Forms.Label()
-        Me.VideoListLabel = New System.Windows.Forms.Label()
         Me.VideoList = New System.Windows.Forms.ListView()
         Me.VideoIconList = New System.Windows.Forms.ImageList(Me.components)
         Me.LibrarySidebar = New Electroduck.Controls.Sidebar(Me.components)
         Me.DownloadingLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me.CurDLLabel = New System.Windows.Forms.Label()
-        Me.QueueLabel = New System.Windows.Forms.Label()
         Me.QueueBox = New System.Windows.Forms.ListBox()
         Me.QueueMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.RemoveSelectedToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CurDLPanel = New System.Windows.Forms.Panel()
         Me.DLQueuedVidsBtn = New System.Windows.Forms.Button()
         Me.CurDLProgress = New System.Windows.Forms.Label()
-        Me.CurDLCancel = New System.Windows.Forms.Button()
         Me.CurDLNameLabel = New System.Windows.Forms.Label()
         Me.AddFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.OpenURLListDialog = New System.Windows.Forms.OpenFileDialog()
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
         Me.ClearAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LoadQueueToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.VideoActionsLabel = New System.Windows.Forms.Label()
+        Me.VideoListLabel = New System.Windows.Forms.Label()
+        Me.CurDLLabel = New System.Windows.Forms.Label()
+        Me.QueueLabel = New System.Windows.Forms.Label()
+        Me.RemoveSelectedToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveQueueToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CurDLCancel = New System.Windows.Forms.Button()
+        Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AddVideoFromFileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenLibraryToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DownloadVideoToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DownloadPlaylistToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DownloadFromListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EnterInMultipleURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenFileOfURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenQueueDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.SaveQueueDialog = New System.Windows.Forms.SaveFileDialog()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
@@ -85,67 +89,12 @@ Partial Class MainForm
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
-        'ExitToolStripMenuItem
-        '
-        Me.ExitToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
-        Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
-        Me.ExitToolStripMenuItem.Text = "Exit"
-        '
-        'AddVideoFromFileToolStripMenuItem
-        '
-        Me.AddVideoFromFileToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_folder
-        Me.AddVideoFromFileToolStripMenuItem.Name = "AddVideoFromFileToolStripMenuItem"
-        Me.AddVideoFromFileToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
-        Me.AddVideoFromFileToolStripMenuItem.Text = "Add Video from File"
-        '
-        'OpenLibraryToolStripMenuItem
-        '
-        Me.OpenLibraryToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_folder_explore
-        Me.OpenLibraryToolStripMenuItem.Name = "OpenLibraryToolStripMenuItem"
-        Me.OpenLibraryToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
-        Me.OpenLibraryToolStripMenuItem.Text = "Open Library Location"
-        '
         'DownloadingToolStripMenuItem
         '
         Me.DownloadingToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DownloadVideoToolStripMenuItem, Me.DownloadPlaylistToolStripMenuItem, Me.DownloadFromListToolStripMenuItem})
         Me.DownloadingToolStripMenuItem.Name = "DownloadingToolStripMenuItem"
         Me.DownloadingToolStripMenuItem.Size = New System.Drawing.Size(90, 20)
         Me.DownloadingToolStripMenuItem.Text = "Downloading"
-        '
-        'DownloadVideoToolStripMenuItem
-        '
-        Me.DownloadVideoToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_arrow_down
-        Me.DownloadVideoToolStripMenuItem.Name = "DownloadVideoToolStripMenuItem"
-        Me.DownloadVideoToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
-        Me.DownloadVideoToolStripMenuItem.Text = "Download Video"
-        '
-        'DownloadPlaylistToolStripMenuItem
-        '
-        Me.DownloadPlaylistToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
-        Me.DownloadPlaylistToolStripMenuItem.Name = "DownloadPlaylistToolStripMenuItem"
-        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(229, 22)
-        Me.DownloadPlaylistToolStripMenuItem.Text = "Download Playlist or Channel"
-        '
-        'DownloadFromListToolStripMenuItem
-        '
-        Me.DownloadFromListToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EnterInMultipleURLsToolStripMenuItem, Me.OpenFileOfURLsToolStripMenuItem})
-        Me.DownloadFromListToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_page_white
-        Me.DownloadFromListToolStripMenuItem.Name = "DownloadFromListToolStripMenuItem"
-        Me.DownloadFromListToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
-        Me.DownloadFromListToolStripMenuItem.Text = "Download from List"
-        '
-        'EnterInMultipleURLsToolStripMenuItem
-        '
-        Me.EnterInMultipleURLsToolStripMenuItem.Name = "EnterInMultipleURLsToolStripMenuItem"
-        Me.EnterInMultipleURLsToolStripMenuItem.Size = New System.Drawing.Size(190, 22)
-        Me.EnterInMultipleURLsToolStripMenuItem.Text = "Enter in multiple URLs"
-        '
-        'OpenFileOfURLsToolStripMenuItem
-        '
-        Me.OpenFileOfURLsToolStripMenuItem.Name = "OpenFileOfURLsToolStripMenuItem"
-        Me.OpenFileOfURLsToolStripMenuItem.Size = New System.Drawing.Size(190, 22)
-        Me.OpenFileOfURLsToolStripMenuItem.Text = "Open file of URLs"
         '
         'MainSplitter
         '
@@ -185,32 +134,6 @@ Partial Class MainForm
         Me.VideoListLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.VideoListLayout.Size = New System.Drawing.Size(620, 312)
         Me.VideoListLayout.TabIndex = 0
-        '
-        'VideoActionsLabel
-        '
-        Me.VideoActionsLabel.AutoSize = True
-        Me.VideoActionsLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.VideoActionsLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_pencil
-        Me.VideoActionsLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.VideoActionsLabel.Location = New System.Drawing.Point(448, 0)
-        Me.VideoActionsLabel.Name = "VideoActionsLabel"
-        Me.VideoActionsLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.VideoActionsLabel.Size = New System.Drawing.Size(169, 20)
-        Me.VideoActionsLabel.TabIndex = 2
-        Me.VideoActionsLabel.Text = "Video Actions"
-        '
-        'VideoListLabel
-        '
-        Me.VideoListLabel.AutoSize = True
-        Me.VideoListLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.VideoListLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
-        Me.VideoListLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.VideoListLabel.Location = New System.Drawing.Point(3, 0)
-        Me.VideoListLabel.Name = "VideoListLabel"
-        Me.VideoListLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.VideoListLabel.Size = New System.Drawing.Size(439, 20)
-        Me.VideoListLabel.TabIndex = 0
-        Me.VideoListLabel.Text = "Video List"
         '
         'VideoList
         '
@@ -265,33 +188,6 @@ Partial Class MainForm
         Me.DownloadingLayout.Size = New System.Drawing.Size(620, 117)
         Me.DownloadingLayout.TabIndex = 0
         '
-        'CurDLLabel
-        '
-        Me.CurDLLabel.AutoSize = True
-        Me.CurDLLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.CurDLLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_computer_link
-        Me.CurDLLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.CurDLLabel.Location = New System.Drawing.Point(203, 0)
-        Me.CurDLLabel.Name = "CurDLLabel"
-        Me.CurDLLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.CurDLLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.CurDLLabel.Size = New System.Drawing.Size(414, 20)
-        Me.CurDLLabel.TabIndex = 3
-        Me.CurDLLabel.Text = "Current Download"
-        '
-        'QueueLabel
-        '
-        Me.QueueLabel.AutoSize = True
-        Me.QueueLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.QueueLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_arrow_down
-        Me.QueueLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.QueueLabel.Location = New System.Drawing.Point(3, 0)
-        Me.QueueLabel.Name = "QueueLabel"
-        Me.QueueLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.QueueLabel.Size = New System.Drawing.Size(194, 20)
-        Me.QueueLabel.TabIndex = 1
-        Me.QueueLabel.Text = "Downloading Queue"
-        '
         'QueueBox
         '
         Me.QueueBox.ContextMenuStrip = Me.QueueMenu
@@ -305,16 +201,9 @@ Partial Class MainForm
         '
         'QueueMenu
         '
-        Me.QueueMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveSelectedToolStripMenuItem, Me.ClearAllToolStripMenuItem})
+        Me.QueueMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveSelectedToolStripMenuItem, Me.ClearAllToolStripMenuItem, Me.SaveQueueToolStripMenuItem, Me.LoadQueueToolStripMenuItem})
         Me.QueueMenu.Name = "QueueMenu"
-        Me.QueueMenu.Size = New System.Drawing.Size(165, 48)
-        '
-        'RemoveSelectedToolStripMenuItem
-        '
-        Me.RemoveSelectedToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
-        Me.RemoveSelectedToolStripMenuItem.Name = "RemoveSelectedToolStripMenuItem"
-        Me.RemoveSelectedToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
-        Me.RemoveSelectedToolStripMenuItem.Text = "Remove Selected"
+        Me.QueueMenu.Size = New System.Drawing.Size(165, 114)
         '
         'CurDLPanel
         '
@@ -352,19 +241,6 @@ Partial Class MainForm
         Me.CurDLProgress.Text = "####"
         Me.CurDLProgress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
-        'CurDLCancel
-        '
-        Me.CurDLCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.CurDLCancel.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.CurDLCancel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
-        Me.CurDLCancel.Location = New System.Drawing.Point(334, 20)
-        Me.CurDLCancel.Name = "CurDLCancel"
-        Me.CurDLCancel.Size = New System.Drawing.Size(75, 24)
-        Me.CurDLCancel.TabIndex = 3
-        Me.CurDLCancel.Text = "Cancel"
-        Me.CurDLCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.CurDLCancel.UseVisualStyleBackColor = True
-        '
         'CurDLNameLabel
         '
         Me.CurDLNameLabel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -395,6 +271,160 @@ Partial Class MainForm
         Me.ClearAllToolStripMenuItem.Name = "ClearAllToolStripMenuItem"
         Me.ClearAllToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
         Me.ClearAllToolStripMenuItem.Text = "Clear All"
+        '
+        'LoadQueueToolStripMenuItem
+        '
+        Me.LoadQueueToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_folder_table
+        Me.LoadQueueToolStripMenuItem.Name = "LoadQueueToolStripMenuItem"
+        Me.LoadQueueToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.LoadQueueToolStripMenuItem.Text = "Import Queue"
+        '
+        'VideoActionsLabel
+        '
+        Me.VideoActionsLabel.AutoSize = True
+        Me.VideoActionsLabel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.VideoActionsLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_pencil
+        Me.VideoActionsLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.VideoActionsLabel.Location = New System.Drawing.Point(448, 0)
+        Me.VideoActionsLabel.Name = "VideoActionsLabel"
+        Me.VideoActionsLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.VideoActionsLabel.Size = New System.Drawing.Size(169, 20)
+        Me.VideoActionsLabel.TabIndex = 2
+        Me.VideoActionsLabel.Text = "Video Actions"
+        '
+        'VideoListLabel
+        '
+        Me.VideoListLabel.AutoSize = True
+        Me.VideoListLabel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.VideoListLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
+        Me.VideoListLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.VideoListLabel.Location = New System.Drawing.Point(3, 0)
+        Me.VideoListLabel.Name = "VideoListLabel"
+        Me.VideoListLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.VideoListLabel.Size = New System.Drawing.Size(439, 20)
+        Me.VideoListLabel.TabIndex = 0
+        Me.VideoListLabel.Text = "Video List"
+        '
+        'CurDLLabel
+        '
+        Me.CurDLLabel.AutoSize = True
+        Me.CurDLLabel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.CurDLLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_computer_link
+        Me.CurDLLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.CurDLLabel.Location = New System.Drawing.Point(203, 0)
+        Me.CurDLLabel.Name = "CurDLLabel"
+        Me.CurDLLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.CurDLLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.CurDLLabel.Size = New System.Drawing.Size(414, 20)
+        Me.CurDLLabel.TabIndex = 3
+        Me.CurDLLabel.Text = "Current Download"
+        '
+        'QueueLabel
+        '
+        Me.QueueLabel.AutoSize = True
+        Me.QueueLabel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.QueueLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_arrow_down
+        Me.QueueLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.QueueLabel.Location = New System.Drawing.Point(3, 0)
+        Me.QueueLabel.Name = "QueueLabel"
+        Me.QueueLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.QueueLabel.Size = New System.Drawing.Size(194, 20)
+        Me.QueueLabel.TabIndex = 1
+        Me.QueueLabel.Text = "Downloading Queue"
+        '
+        'RemoveSelectedToolStripMenuItem
+        '
+        Me.RemoveSelectedToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
+        Me.RemoveSelectedToolStripMenuItem.Name = "RemoveSelectedToolStripMenuItem"
+        Me.RemoveSelectedToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.RemoveSelectedToolStripMenuItem.Text = "Remove Selected"
+        '
+        'SaveQueueToolStripMenuItem
+        '
+        Me.SaveQueueToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icon_disk
+        Me.SaveQueueToolStripMenuItem.Name = "SaveQueueToolStripMenuItem"
+        Me.SaveQueueToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
+        Me.SaveQueueToolStripMenuItem.Text = "Export Queue"
+        '
+        'CurDLCancel
+        '
+        Me.CurDLCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.CurDLCancel.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.CurDLCancel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
+        Me.CurDLCancel.Location = New System.Drawing.Point(334, 20)
+        Me.CurDLCancel.Name = "CurDLCancel"
+        Me.CurDLCancel.Size = New System.Drawing.Size(75, 24)
+        Me.CurDLCancel.TabIndex = 3
+        Me.CurDLCancel.Text = "Cancel"
+        Me.CurDLCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.CurDLCancel.UseVisualStyleBackColor = True
+        '
+        'ExitToolStripMenuItem
+        '
+        Me.ExitToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_x
+        Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
+        Me.ExitToolStripMenuItem.Text = "Exit"
+        '
+        'AddVideoFromFileToolStripMenuItem
+        '
+        Me.AddVideoFromFileToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_folder
+        Me.AddVideoFromFileToolStripMenuItem.Name = "AddVideoFromFileToolStripMenuItem"
+        Me.AddVideoFromFileToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
+        Me.AddVideoFromFileToolStripMenuItem.Text = "Add Video from File"
+        '
+        'OpenLibraryToolStripMenuItem
+        '
+        Me.OpenLibraryToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_folder_explore
+        Me.OpenLibraryToolStripMenuItem.Name = "OpenLibraryToolStripMenuItem"
+        Me.OpenLibraryToolStripMenuItem.Size = New System.Drawing.Size(191, 22)
+        Me.OpenLibraryToolStripMenuItem.Text = "Open Library Location"
+        '
+        'DownloadVideoToolStripMenuItem
+        '
+        Me.DownloadVideoToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_arrow_down
+        Me.DownloadVideoToolStripMenuItem.Name = "DownloadVideoToolStripMenuItem"
+        Me.DownloadVideoToolStripMenuItem.Size = New System.Drawing.Size(229, 22)
+        Me.DownloadVideoToolStripMenuItem.Text = "Download Video"
+        '
+        'DownloadPlaylistToolStripMenuItem
+        '
+        Me.DownloadPlaylistToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
+        Me.DownloadPlaylistToolStripMenuItem.Name = "DownloadPlaylistToolStripMenuItem"
+        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(229, 22)
+        Me.DownloadPlaylistToolStripMenuItem.Text = "Download Playlist or Channel"
+        '
+        'DownloadFromListToolStripMenuItem
+        '
+        Me.DownloadFromListToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EnterInMultipleURLsToolStripMenuItem, Me.OpenFileOfURLsToolStripMenuItem})
+        Me.DownloadFromListToolStripMenuItem.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_page_white
+        Me.DownloadFromListToolStripMenuItem.Name = "DownloadFromListToolStripMenuItem"
+        Me.DownloadFromListToolStripMenuItem.Size = New System.Drawing.Size(229, 22)
+        Me.DownloadFromListToolStripMenuItem.Text = "Download from List"
+        '
+        'EnterInMultipleURLsToolStripMenuItem
+        '
+        Me.EnterInMultipleURLsToolStripMenuItem.Name = "EnterInMultipleURLsToolStripMenuItem"
+        Me.EnterInMultipleURLsToolStripMenuItem.Size = New System.Drawing.Size(190, 22)
+        Me.EnterInMultipleURLsToolStripMenuItem.Text = "Enter in multiple URLs"
+        '
+        'OpenFileOfURLsToolStripMenuItem
+        '
+        Me.OpenFileOfURLsToolStripMenuItem.Name = "OpenFileOfURLsToolStripMenuItem"
+        Me.OpenFileOfURLsToolStripMenuItem.Size = New System.Drawing.Size(190, 22)
+        Me.OpenFileOfURLsToolStripMenuItem.Text = "Open file of URLs"
+        '
+        'OpenQueueDialog
+        '
+        Me.OpenQueueDialog.FileName = "OpenFileDialog1"
+        Me.OpenQueueDialog.Filter = "DuckDL queue files|*.ddq|All files|*.*"
+        Me.OpenQueueDialog.Title = "Open Queue List File"
+        '
+        'SaveQueueDialog
+        '
+        Me.SaveQueueDialog.DefaultExt = "*.ddq"
+        Me.SaveQueueDialog.Filter = "DuckDL Video Queue|*.ddq"
+        Me.SaveQueueDialog.Title = "Save video queue"
         '
         'MainForm
         '
@@ -458,5 +488,9 @@ Partial Class MainForm
     Friend WithEvents OpenURLListDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents LifeCheck As System.Windows.Forms.Timer
     Friend WithEvents ClearAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents SaveQueueToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents LoadQueueToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpenQueueDialog As System.Windows.Forms.OpenFileDialog
+    Friend WithEvents SaveQueueDialog As System.Windows.Forms.SaveFileDialog
 
 End Class
