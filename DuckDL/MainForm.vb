@@ -599,6 +599,7 @@ NextLine:
     End Sub
 
     Private Sub ClearAllToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ClearAllToolStripMenuItem.Click
+        VideoQueue.Clear()
         QueueBox.Items.Clear()
         QueueBox.Update()
     End Sub

@@ -1,4 +1,5 @@
-SetCompressor lzma
+; SOLID prevents Kaspersky Antivirus from having a seizure
+SetCompressor /SOLID lzma
 Outfile "DuckDLInstall.exe"
 
 InstallDir $PROGRAMFILES\Electroduck\DuckDL
