@@ -1,39 +1,20 @@
 ﻿Imports System.Net
-Imports System.Runtime.InteropServices
 
 Public Class MainForm
-#Region "File Icons (DEFUNCT)"
-    'Private Structure SHFILEINFO
-    '    Public hIcon As IntPtr ' : icon
-    '    Public iIcon As Integer ' : icondex
-    '    Public dwAttributes As Integer ' : SFGAO_ flags
-    '    <MarshalAs(UnmanagedType.ByValTStr, SizeConst:=260)> _
-    '    Public szDisplayName As String
-    '    <MarshalAs(UnmanagedType.ByValTStr, SizeConst:=80)> _
-    '    Public szTypeName As String
-    'End Structure
-
-    'Private Declare Ansi Function SHGetFileInfo Lib "shell32.dll" (ByVal pszPath As String, _
-    'ByVal dwFileAttributes As Integer, ByRef psfi As SHFILEINFO, ByVal cbFileInfo As Integer, _
-    'ByVal uFlags As Integer) As IntPtr
-
-    'Private Const SHGFI_ICON = &H100
-    'Private Const SHGFI_SMALLICON = &H1
-    'Private Const SHGFI_LARGEICON = &H0         ' Large icon
-    'Private nIndex = 0
-
-#End Region
-
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
     Public Const FORMAT_UNKNOWN As Integer = -1
     Public Const FORMAT_BEST As Integer = -2
+    Public Const FORMAT_BESTAUDIO As Integer = -3
+    Public Const FORMAT_CUSTOM As Integer = -4
 
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
     Public Shared ReadOnly QueueLocation As String = LibraryLocation & "\_q.ddq"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
+
     Dim VideoQueue As New Queue(Of VideoDownload)
     Dim Downloading As Boolean = False
     Dim DLingQueued As Boolean = False
+    Dim IsProcessRunning As Boolean = False
 
     Class VideoDownload
         Private _url As String
@@ -113,27 +94,63 @@ Public Class MainForm
     Private Icn_Film As Bitmap = My.Resources.icn_film
     Private Icn_Sound As Bitmap = My.Resources.icn_sound
 
-    Private Sub MainForm_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
+    'SB-Ansel - Checks registry for dependancy
+    Private Sub Microsoft_VC2010_Check() Handles MyBase.Load 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
+        Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86", "Version", Nothing)
+        If regKey Is Nothing Then
+            VC2010_MSGBOX()
+            Process.Start(Application.StartupPath() & "vcredist_x86.exe")
+            'Process.Start("C:\Program Files (x86)\DuckDL\vcredist_x86.exe")
+        Else
+            '-SB-Ansel - Easy way of automatically updating youtube-dl
+            'Shell("youtube-dl.exe --update")
+
+            ' SB-Ansel - Splash screen progress bar and YT-DL update check.
+            PerformInitialisation()
+        End If
+    End Sub
+    'SB-Ansel - Popbox to prompt the user to install C++ Redist package.
+    Private Sub VC2010_MSGBOX() 'Handles MyBase.Load
+        Dim result = MessageBox.Show("DuckDL requires Microsoft Visual C++ 2010 redistributable package (x86) in order to work properly, by pressing ok DuckDL will close and will automatically install Microsoft Visuall C++ 2010 for you.", "Microsoft Visual C++ 2010 required!", MessageBoxButtons.OK)
+        Close()
+    End Sub
+    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' If there is a FILE (not a dir) which occupies the library location, delete it
-        If System.IO.File.Exists(LibraryLocation) Then System.IO.File.Delete(LibraryLocation)
+        If IO.File.Exists(LibraryLocation) Then IO.File.Delete(LibraryLocation)
         ' Create library dir
-        If Not System.IO.Directory.Exists(LibraryLocation) Then System.IO.Directory.CreateDirectory(LibraryLocation)
-        Me.Text = My.Application.Info.ProductName
+        If Not IO.Directory.Exists(LibraryLocation) Then IO.Directory.CreateDirectory(LibraryLocation)
+        Text = My.Application.Info.ProductName
         QueueBox.Items.Clear()
         ' Load queue from last session
         If IO.File.Exists(QueueLocation) Then
             LoadQueue(QueueLocation)
         End If
-        'CurDLProgress.Value = 0
-        'CurDLProgress.Enabled = False
-        CurDLNameLabel.Text = "No video downloading"
-        'CurDLInfoLabel.Text = ""
         CurDLCancel.Enabled = False
         UpdateDLButton()
         GetDownloadedVideos()
     End Sub
+    Public Sub PerformInitialisation()
+        Dim p = New Process
+        Dim s As String = ""
+        With p.StartInfo
+            .FileName = Application.StartupPath() & "\youtube-dl.exe"
+            .Arguments = " -U"
+            .UseShellExecute = False
+            .RedirectStandardOutput = True
+            .CreateNoWindow = True
+            p.EnableRaisingEvents = True
+        End With
+        p.Start()
+        Cursor = Cursors.WaitCursor 'change cursor to hourglass type
+        'While p.HasExited = False
+        '    Console.WriteLine(p.StandardOutput.ReadToEnd)
+        '    'DirectCast(My.Application.SplashScreen, Splash).UpdateProgress()
+        'End While
+        p.WaitForExit()
+        Cursor = Cursors.Arrow 'change cursor To normal type
+    End Sub
 
-    Private Sub MainForm_Closing(sender As Object, e As Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
+    Private Sub MainForm_Closing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         SaveQueue(QueueLocation)
     End Sub
 
@@ -143,13 +160,15 @@ Public Class MainForm
 
     Function GetVideoThumbnail(url As String) As Bitmap
         Dim p As New Process
-        p.StartInfo.FileName = Application.StartupPath() & "\youtube-dl.exe"
-        p.StartInfo.Arguments = " --get-title " & url
-        p.StartInfo.UseShellExecute = False
-        p.StartInfo.RedirectStandardOutput = True
-        p.Start()
+        With p
+            .StartInfo.FileName = Application.StartupPath() & "\youtube-dl.exe"
+            .StartInfo.Arguments = " --get-title " & url
+            .StartInfo.UseShellExecute = False
+            .StartInfo.RedirectStandardOutput = True
+            .Start()
+        End With
         Dim imgUrl As String
-        Using oStreamReader As System.IO.StreamReader = p.StandardOutput
+        Using oStreamReader As IO.StreamReader = p.StandardOutput
             imgUrl = oStreamReader.ReadToEnd()
         End Using
         Dim tmp As String = My.Computer.FileSystem.GetTempFileName
@@ -204,23 +223,27 @@ Public Class MainForm
             DLQueuedVidsBtn.Enabled = True
             DLQueuedVidsBtn.Image = Icn_Delete
             DLQueuedVidsBtn.Text = "Stop downloading from Queue"
+            'Console.WriteLine("Debug 1")
         Else
             If VideoQueue.Count > 0 Then
                 DLQueuedVidsBtn.Enabled = True
                 DLQueuedVidsBtn.Image = Icn_Download
                 DLQueuedVidsBtn.Text = "Start downloading Queue"
+                'Console.WriteLine("Debug 2")
             Else
                 DLQueuedVidsBtn.Enabled = False
                 DLQueuedVidsBtn.Image = Nothing
-                DLQueuedVidsBtn.Text = "Add some videos to your Queue!"
+                DLQueuedVidsBtn.Text = "Add videos to your Queue!"
+                'Console.WriteLine("Debug 3")
             End If
         End If
     End Sub
 
-    Private Sub DownloadVideoToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles DownloadVideoToolStripMenuItem.Click
-        Dim url As String = InputBox("Enter the URL of the video you want to download:", "Download Video")
+    Private Sub DownloadVideoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DownloadVideoToolStripMenuItem.Click
+        Dim url As String = InputBox("Enter video URL:", "Download Video")
         If url <> "" Then
-            If UrlIsValid(url) And url.Contains("?v=") Then
+            'If UrlIsValid(url) And url.Contains("?v=") Then
+            If UrlIsValid(url) Then ' SB-Ansel - removing url.Contains("?v=") allows the user to now utilise the shortend youtube URL format, https//youtu.be/
                 url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
                 Dim fmt As Integer = PromptForFormat(url)
                 If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(New VideoDownload(url, GetVideoName(url), fmt))
@@ -230,14 +253,13 @@ Public Class MainForm
         End If
 
     End Sub
-
     Dim dldr As Process
     Dim curDL As VideoDownload
     Sub DownloadVideo(v2d As VideoDownload)
         curDL = v2d
         Dim formatString As String = "DEADBEEF"
         If curDL.Format = FORMAT_UNKNOWN Then
-            If MsgBox("No format was specified for this video: " & vbNewLine & curDL.Name & "Download anyway?", _
+            If MsgBox("No format was specified for this video: " & vbNewLine & curDL.Name & "Download anyway?",
                    MsgBoxStyle.YesNo + MsgBoxStyle.Exclamation, "Warning!") = MsgBoxResult.Yes Then
                 formatString = ""
             Else
@@ -247,12 +269,18 @@ Public Class MainForm
         If curDL.Format = FORMAT_BEST Then
             formatString = " -f best "
         End If
+        If curDL.Format = FORMAT_BESTAUDIO Then
+            formatString = " -f bestaudio "
+        End If
+        If curDL.Format = FORMAT_CUSTOM Then
+            formatString = " -f " + FormatDialog.Custom_Command + " "
+        End If
         If formatString = "DEADBEEF" Then
-            formatString = " -f " & CStr(curDL.Format) & " "
+            formatString = " -f " & curDL.Format & " "
         End If
         Downloading = True
         CurDLCancel.Enabled = True
-        CurDLNameLabel.Text = "Downloading " & curDL.Name
+        'CurDLNameLabel.Text = "Downloading " & curDL.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
         dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """ -o ""%(title)s.%(format_id)s.%(id)s.%(ext)s"""
@@ -261,22 +289,21 @@ Public Class MainForm
         dldr.StartInfo.WorkingDirectory = LibraryLocation
         dldr.StartInfo.CreateNoWindow = True
         AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
-        'AddHandler dldr.Exited, AddressOf DownloadDone         DOESN'T WORK no fking idea
+        'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
         dldr.Start()
         dldr.BeginOutputReadLine()
         LifeCheck.Enabled = True
     End Sub
-
     Dim DownloadLog As String = ""
     Private Sub DLProgressUpdate(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         _DLProgressUpdate(e.Data)
     End Sub
     Private Delegate Sub __DLProgressUpdate(ByVal text As String)
     Private Sub _DLProgressUpdate(ByVal txt As String)
-        If Me.InvokeRequired Then
+        If InvokeRequired Then
             Dim del As New __DLProgressUpdate(AddressOf _DLProgressUpdate)
             Dim args As Object() = {txt}
-            Me.Invoke(del, args)
+            Invoke(del, args)
         Else
             DownloadLog &= txt & vbNewLine
             If txt <> "" Then CurDLProgress.Text = txt
@@ -287,11 +314,10 @@ Public Class MainForm
             End If
         End If
     End Sub
-
+    ' Check to see if the suppiled URL is a real youtube URL.
     Private Function UrlIsValid(ByVal url As String) As Boolean
-        Dim is_valid As Boolean = False
+        ' Dim is_valid As Boolean = False - appears to be unused
         If url.ToLower().StartsWith("www.") Then url = "http://" & url
-
         Dim web_response As HttpWebResponse = Nothing
         Try
             Dim web_request As HttpWebRequest = HttpWebRequest.Create(url)
@@ -304,38 +330,39 @@ Public Class MainForm
         End Try
     End Function
 
-    Private Sub RemoveSelectedToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles RemoveSelectedToolStripMenuItem.Click
+    Private Sub RemoveSelectedToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RemoveSelectedToolStripMenuItem.Click
         RemoveVideoFromQueue(QueueBox.SelectedIndex)
     End Sub
 
     Private Sub DownloadDone(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing)
-        '    _DownloadDone()
-        'End Sub
-        'Private Delegate Sub __DownloadDone()
-        'Private Sub _DownloadDone()
-        '    If Me.InvokeRequired Then
-        '        Dim done As New __DownloadDone(AddressOf _DownloadDone)
-        '        Dim args As Object() = {}
-        '        Me.Invoke(done, args)
-        '    Else
         Downloading = False
         LifeCheck.Enabled = False
-        CurDLNameLabel.Text = "No video downloading"
         CurDLCancel.Enabled = False
-        CurDLProgress.Text = "####"
+        CurDLProgress.Text = "Download complete."
         GetDownloadedVideos()
         DownloadNext()
-        'End If
     End Sub
-
-    Private Sub CurDLCancel_Click(sender As System.Object, e As System.EventArgs) Handles CurDLCancel.Click
+    'SB-Ansel - Helped me solve the unhandled exception when CurDLCancel is called by the user pressing the cancel button.
+    'Dim p() As Process
+    'Private Sub CheckForRunningProcess()
+    '    p = Process.GetProcessesByName("dldr")
+    '    If p.Count > 0 Then
+    '        ' Process is running
+    '        Console.WriteLine("DlDR still running!")
+    '    Else
+    '        ' Process is not running
+    '        Console.WriteLine("DlDR not running!")
+    '    End If
+    'End Sub
+    Private Sub CurDLCancel_Click(sender As Object, e As EventArgs) Handles CurDLCancel.Click
         dldr.Kill()
+        'CheckForRunningProcess()
+        'DownloadDone() SB-Ansel - This isn't supposed to be here.
         CleanPartFiles()
-        DownloadDone()
     End Sub
 
-    Private Sub DLQueuedVidsBtn_Click(sender As System.Object, e As System.EventArgs) Handles DLQueuedVidsBtn.Click
-        If VideoQueue.Count > 0 Then
+    Private Sub DLQueuedVidsBtn_Click(sender As Object, e As EventArgs) Handles DLQueuedVidsBtn.Click
+        If VideoQueue.Count > 0 Then 'This controls updating the download button if queue entry is availble'
             If DLingQueued Then
                 DLingQueued = False
             Else
@@ -386,28 +413,28 @@ Public Class MainForm
         Return ret
     End Function
 
-    Private Sub PlaySelectedVideos(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles VideoList.DoubleClick
+    Private Sub PlaySelectedVideos(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing) Handles VideoList.DoubleClick
         For Each itm As ListViewItem In VideoList.SelectedItems
             PlayVideo(LibraryLocation & "\" & itm.Text)
         Next
     End Sub
 
-    Private Sub ExitToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ExitToolStripMenuItem.Click
-        Me.Close()
+    Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Close()
     End Sub
 
-    Private Sub AddVideoFromFileToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles AddVideoFromFileToolStripMenuItem.Click
+    Private Sub AddVideoFromFileToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddVideoFromFileToolStripMenuItem.Click
         If AddFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             IO.File.Copy(AddFileDialog.FileName, LibraryLocation & "\" & FileNameFromPath(AddFileDialog.FileName))
             GetDownloadedVideos()
         End If
     End Sub
 
-    Private Sub OpenLibraryFolder(Optional sender As System.Object = Nothing, Optional e As System.EventArgs = Nothing) Handles OpenLibraryToolStripMenuItem.Click
+    Private Sub OpenLibraryFolder(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing) Handles OpenLibraryToolStripMenuItem.Click
         Process.Start(LibraryLocation)
     End Sub
 
-    Private Sub DownloadPlaylistToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
+    Private Sub DownloadPlaylistToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
         Dim url As String = InputBox("Enter the URL of the playlist you want to download:", "Download Playlist")
         If url <> "" Then
             If UrlIsValid(url) Then
@@ -424,15 +451,15 @@ Public Class MainForm
                     Next
                 End If
             Else
-                MsgBox("Invalid playlist URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
+                MsgBox("Invalid playlist URL: " & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If
         End If
     End Sub
 
-    Private Shared InfOut As System.Text.StringBuilder = Nothing
+    Private Shared InfOut As Text.StringBuilder = Nothing
     Public Function GetVideoInfo(ByVal args As String, ByVal url As String, Optional ByVal progressTxt As String = "Downloading information...") As String
-        InfOut = New System.Text.StringBuilder()
-        Dim NewProcess As New System.Diagnostics.Process()
+        InfOut = New Text.StringBuilder()
+        Dim NewProcess As New Diagnostics.Process()
         Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
         WaitDlg.Show()
         With NewProcess.StartInfo
@@ -445,7 +472,6 @@ Public Class MainForm
             .WindowStyle = ProcessWindowStyle.Normal
             .CreateNoWindow = True
         End With
-
         ' Set our event handler to asynchronously read the sort output.
         AddHandler NewProcess.OutputDataReceived, AddressOf GetVideoInfo_OutputHandler
         NewProcess.Start()
@@ -494,21 +520,7 @@ Public Class MainForm
 cannot:
         MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
     End Sub
-
-    Private Sub LibrarySidebar_Click(ItmID As Integer) Handles LibrarySidebar.ItemClicked
-        Select Case ItmID
-            Case 1
-                PlaySelectedVideos()
-            Case 2
-                DeleteSelectedVideos()
-            Case 3
-                OpenLibraryFolder()
-            Case 4
-                RedownloadSelectedVideo()
-        End Select
-    End Sub
-
-    Private Sub DownloadChannelToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
+    Private Sub DownloadChannelToolStripMenuItem_Click(sender As Object, e As EventArgs)
         MsgBox("Sorry, this is no longer supported by YouTube.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation)
     End Sub
 
@@ -524,13 +536,14 @@ cannot:
                 AddVideoToQueue(New VideoDownload(line, GetVideoName(line), format))
             Else
 ShowDlg:
-                Dim dlg As New Electroduck.Controls.CustomDialog
-                dlg.dialogTitle = "Error"
-                dlg.dialogMessage = "This URL is not valid:" & vbNewLine & line
-                dlg.buttonEText = "Continue"
-                dlg.buttonEResult = ContinueOrCancel._Continue
-                dlg.buttonDText = "Cancel"
-                dlg.buttonDResult = ContinueOrCancel.Cancel
+                Dim dlg As New Controls.CustomDialog With {
+                    .dialogTitle = "Error",
+                    .dialogMessage = "This URL is not valid:" & vbNewLine & line,
+                    .buttonEText = "Continue",
+                    .buttonEResult = ContinueOrCancel._Continue,
+                    .buttonDText = "Cancel",
+                    .buttonDResult = ContinueOrCancel.Cancel
+                }
                 dlg.ShowDialog()
                 Select Case dlg.choice
                     Case ContinueOrCancel._Continue
@@ -545,17 +558,17 @@ NextLine:
         Next
     End Sub
 
-    Private Sub EnterInMultipleURLsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles EnterInMultipleURLsToolStripMenuItem.Click
+    Private Sub EnterInMultipleURLsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EnterInMultipleURLsToolStripMenuItem.Click
         Dim tbd As New TextBoxDialog
         tbd.Title = "Download Multiple"
-        tbd.Prompt = "Enter multiple video URLs, one per line:"
+        tbd.Prompt = "Enter multiple video URLs, one per line: "
         If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
             If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(tbd.Lines, fmt)
         End If
     End Sub
 
-    Private Sub OpenFileOfURLsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
+    Private Sub OpenFileOfURLsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
         If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
             Dim fmt As Integer = PromptForFormat(lines(0))
@@ -581,24 +594,20 @@ NextLine:
         End If
     End Function
 
-    Private Sub LifeCheck_Tick(sender As System.Object, e As System.EventArgs) Handles LifeCheck.Tick
+    Private Sub LifeCheck_Tick(sender As Object, e As EventArgs) Handles LifeCheck.Tick
         If dldr.HasExited Then
             LifeCheck.Enabled = False
-            MsgBox("Failed to download video: " & vbNewLine & curDL.Name & vbNewLine & curDL.Url & vbNewLine & "In format: " & curDL.Format, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "Error")
+            MsgBox("Failed to download video: " & vbNewLine & curDL.Name & vbNewLine & curDL.Url & vbNewLine & "In format: " & curDL.Format, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "DuckDL - Error!")
             DownloadDone()
         End If
     End Sub
 
+    ' SB-Ansel - Play video using system assocations.
     Sub PlayVideo(ByVal path As String)
-        Dim player As String = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\Software\Electroduck\DuckDL", "PLAYER", "")
-        If player = "" And IO.File.Exists(player) Then
-            Process.Start(path)
-        Else
-            Process.Start(player, """" & path & """")
-        End If
+        Process.Start(path)
     End Sub
 
-    Private Sub ClearAllToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ClearAllToolStripMenuItem.Click
+    Private Sub ClearAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClearAllToolStripMenuItem.Click
         VideoQueue.Clear()
         QueueBox.Items.Clear()
         QueueBox.Update()
@@ -620,7 +629,7 @@ attempt_line:
             Try
                 AddVideoToQueue(VideoDownload.FromString(line))
             Catch ex As Exception
-                Dim action As MsgBoxResult = MsgBox("Error reading queue file:" & vbNewLine & ex.ToString, _
+                Dim action As MsgBoxResult = MsgBox("Error reading queue file:" & vbNewLine & ex.ToString,
                           MsgBoxStyle.Exclamation + MsgBoxStyle.AbortRetryIgnore, "Error reading queue")
                 If action = MsgBoxResult.Abort Then
                     Return
@@ -634,15 +643,41 @@ attempt_line:
         End While
     End Sub
 
-    Private Sub LoadQueueToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles LoadQueueToolStripMenuItem.Click
+    Private Sub LoadQueueToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadQueueToolStripMenuItem.Click
         If OpenQueueDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
             LoadQueue(OpenQueueDialog.FileName)
         End If
     End Sub
 
-    Private Sub SaveQueueToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles SaveQueueToolStripMenuItem.Click
+    Private Sub SaveQueueToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveQueueToolStripMenuItem.Click
         If SaveQueueDialog.ShowDialog = Windows.Forms.DialogResult.OK Then
             SaveQueue(SaveQueueDialog.FileName)
         End If
     End Sub
+    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        AboutBox1.Show()
+    End Sub
+    Private Sub ReportBugToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportBugToolStripMenuItem.Click
+        Process.Start("https://github.com/SB-Ansel/DuckDL/issues")
+    End Sub
+    Private Sub Play_Click_1(sender As Object, e As EventArgs) Handles Play.Click
+        PlaySelectedVideos()
+    End Sub
+
+    Private Sub Delete_Click(sender As Object, e As EventArgs) Handles Delete.Click
+        DeleteSelectedVideos()
+    End Sub
+
+    Private Sub Show_in_folder_Click(sender As Object, e As EventArgs) Handles Show_in_folder.Click
+        OpenLibraryFolder()
+    End Sub
+
+    Private Sub Redownload_Click(sender As Object, e As EventArgs) Handles Redownload.Click
+        RedownloadSelectedVideo()
+    End Sub
+
+    Private Sub ViewOnGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ViewOnGithubToolStripMenuItem.Click
+        Process.Start("https://github.com/SB-Ansel/DuckDL")
+    End Sub
 End Class
+'SB-Ansel - 08/27/2020 - DuckDL Build
