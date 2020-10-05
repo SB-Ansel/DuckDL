@@ -41,6 +41,8 @@ Partial Class MainForm
         Me.HelpToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ViewOnGithubToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportBugToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.toolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MainSplitter = New System.Windows.Forms.SplitContainer()
@@ -73,8 +75,6 @@ Partial Class MainForm
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
         Me.OpenQueueDialog = New System.Windows.Forms.OpenFileDialog()
         Me.SaveQueueDialog = New System.Windows.Forms.SaveFileDialog()
-        Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
@@ -202,19 +202,30 @@ Partial Class MainForm
         'ViewOnGithubToolStripMenuItem
         '
         Me.ViewOnGithubToolStripMenuItem.Name = "ViewOnGithubToolStripMenuItem"
-        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(156, 22)
+        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.ViewOnGithubToolStripMenuItem.Text = "&View on GitHub"
         '
         'ReportBugToolStripMenuItem
         '
         Me.ReportBugToolStripMenuItem.Name = "ReportBugToolStripMenuItem"
-        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(156, 22)
+        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.ReportBugToolStripMenuItem.Text = "&Issues"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        '
+        'CheckForUpdatesToolStripMenuItem
+        '
+        Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Updates..."
         '
         'toolStripSeparator5
         '
         Me.toolStripSeparator5.Name = "toolStripSeparator5"
-        Me.toolStripSeparator5.Size = New System.Drawing.Size(153, 6)
+        Me.toolStripSeparator5.Size = New System.Drawing.Size(177, 6)
         '
         'AboutToolStripMenuItem
         '
@@ -556,17 +567,6 @@ Partial Class MainForm
         Me.SaveQueueDialog.DefaultExt = "*.ddq"
         Me.SaveQueueDialog.Filter = "DuckDL Video Queue|*.ddq"
         Me.SaveQueueDialog.Title = "Save video queue"
-        '
-        'CheckForUpdatesToolStripMenuItem
-        '
-        Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
-        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Updates..."
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
         '
         'MainForm
         '

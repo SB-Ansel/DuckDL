@@ -698,4 +698,8 @@ attempt_line:
     Private Sub AboutToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
         AboutBox1.Show()
     End Sub
+
+    Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
+        MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
+    End Sub
 End Class
