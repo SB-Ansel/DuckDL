@@ -25,30 +25,36 @@ Partial Class MainForm
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.MainMenu = New System.Windows.Forms.MenuStrip()
-        Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FileToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.AddVideoFromFileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenLibraryToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DownloadingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.toolStripSeparator = New System.Windows.Forms.ToolStripSeparator()
+        Me.PreferencesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.toolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DownloadVideoToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DownloadPlaylistToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DownloadFromListToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EnterInMultipleURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenFileOfURLsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.HelpToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ViewOnGithubToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportBugToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.toolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MainSplitter = New System.Windows.Forms.SplitContainer()
-        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
-        Me.Play = New System.Windows.Forms.Button()
-        Me.Delete = New System.Windows.Forms.Button()
-        Me.Show_in_folder = New System.Windows.Forms.Button()
-        Me.Redownload = New System.Windows.Forms.Button()
-        Me.LabelActions = New System.Windows.Forms.Label()
-        Me.VideoListLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me.VideoListLabel = New System.Windows.Forms.Label()
+        Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.VideoList = New System.Windows.Forms.ListView()
         Me.VideoIconList = New System.Windows.Forms.ImageList(Me.components)
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Version_Label_Main_Window = New System.Windows.Forms.Label()
+        Me.Play = New System.Windows.Forms.Button()
+        Me.Redownload = New System.Windows.Forms.Button()
+        Me.Delete = New System.Windows.Forms.Button()
+        Me.Show_in_folder = New System.Windows.Forms.Button()
         Me.DownloadingLayout = New System.Windows.Forms.TableLayoutPanel()
         Me.CurDLLabel = New System.Windows.Forms.Label()
         Me.QueueLabel = New System.Windows.Forms.Label()
@@ -67,14 +73,15 @@ Partial Class MainForm
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
         Me.OpenQueueDialog = New System.Windows.Forms.OpenFileDialog()
         Me.SaveQueueDialog = New System.Windows.Forms.SaveFileDialog()
-        Me.ViewOnGithubToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
         Me.MainSplitter.Panel2.SuspendLayout()
         Me.MainSplitter.SuspendLayout()
-        Me.TableLayoutPanel1.SuspendLayout()
-        Me.VideoListLayout.SuspendLayout()
+        Me.TableLayoutPanel2.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         Me.DownloadingLayout.SuspendLayout()
         Me.QueueMenu.SuspendLayout()
         Me.CurDLPanel.SuspendLayout()
@@ -82,9 +89,10 @@ Partial Class MainForm
         '
         'MainMenu
         '
+        Me.MainMenu.BackColor = System.Drawing.Color.White
         Me.MainMenu.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
         Me.MainMenu.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.MainMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.DownloadingToolStripMenuItem, Me.HelpToolStripMenuItem})
+        Me.MainMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem1, Me.ToolsToolStripMenuItem, Me.HelpToolStripMenuItem1})
         Me.MainMenu.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu.Name = "MainMenu"
         Me.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
@@ -92,97 +100,132 @@ Partial Class MainForm
         Me.MainMenu.TabIndex = 0
         Me.MainMenu.Text = "MenuStrip1"
         '
-        'FileToolStripMenuItem
+        'FileToolStripMenuItem1
         '
-        Me.FileToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem, Me.AddVideoFromFileToolStripMenuItem, Me.OpenLibraryToolStripMenuItem})
-        Me.FileToolStripMenuItem.Font = New System.Drawing.Font("Arial", 9.0!)
-        Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(39, 20)
-        Me.FileToolStripMenuItem.Text = "File"
+        Me.FileToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddVideoFromFileToolStripMenuItem, Me.OpenLibraryToolStripMenuItem, Me.toolStripSeparator, Me.PreferencesToolStripMenuItem, Me.toolStripSeparator2, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem1.Name = "FileToolStripMenuItem1"
+        Me.FileToolStripMenuItem1.Size = New System.Drawing.Size(37, 20)
+        Me.FileToolStripMenuItem1.Text = "&File"
+        '
+        'AddVideoFromFileToolStripMenuItem
+        '
+        Me.AddVideoFromFileToolStripMenuItem.Image = CType(resources.GetObject("AddVideoFromFileToolStripMenuItem.Image"), System.Drawing.Image)
+        Me.AddVideoFromFileToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.AddVideoFromFileToolStripMenuItem.Name = "AddVideoFromFileToolStripMenuItem"
+        Me.AddVideoFromFileToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
+        Me.AddVideoFromFileToolStripMenuItem.Size = New System.Drawing.Size(213, 22)
+        Me.AddVideoFromFileToolStripMenuItem.Text = "&Add video from file"
+        '
+        'OpenLibraryToolStripMenuItem
+        '
+        Me.OpenLibraryToolStripMenuItem.Image = CType(resources.GetObject("OpenLibraryToolStripMenuItem.Image"), System.Drawing.Image)
+        Me.OpenLibraryToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.OpenLibraryToolStripMenuItem.Name = "OpenLibraryToolStripMenuItem"
+        Me.OpenLibraryToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
+        Me.OpenLibraryToolStripMenuItem.Size = New System.Drawing.Size(213, 22)
+        Me.OpenLibraryToolStripMenuItem.Text = "&Open"
+        '
+        'toolStripSeparator
+        '
+        Me.toolStripSeparator.Name = "toolStripSeparator"
+        Me.toolStripSeparator.Size = New System.Drawing.Size(210, 6)
+        '
+        'PreferencesToolStripMenuItem
+        '
+        Me.PreferencesToolStripMenuItem.Image = CType(resources.GetObject("PreferencesToolStripMenuItem.Image"), System.Drawing.Image)
+        Me.PreferencesToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.PreferencesToolStripMenuItem.Name = "PreferencesToolStripMenuItem"
+        Me.PreferencesToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
+        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(213, 22)
+        Me.PreferencesToolStripMenuItem.Text = "Preferences"
+        '
+        'toolStripSeparator2
+        '
+        Me.toolStripSeparator2.Name = "toolStripSeparator2"
+        Me.toolStripSeparator2.Size = New System.Drawing.Size(210, 6)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
         Me.ExitToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
-        Me.ExitToolStripMenuItem.Text = "Exit"
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(213, 22)
+        Me.ExitToolStripMenuItem.Text = "E&xit"
         '
-        'AddVideoFromFileToolStripMenuItem
+        'ToolsToolStripMenuItem
         '
-        Me.AddVideoFromFileToolStripMenuItem.Name = "AddVideoFromFileToolStripMenuItem"
-        Me.AddVideoFromFileToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
-        Me.AddVideoFromFileToolStripMenuItem.Text = "Add Video from File"
-        '
-        'OpenLibraryToolStripMenuItem
-        '
-        Me.OpenLibraryToolStripMenuItem.Name = "OpenLibraryToolStripMenuItem"
-        Me.OpenLibraryToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
-        Me.OpenLibraryToolStripMenuItem.Text = "Open Library Location"
-        '
-        'DownloadingToolStripMenuItem
-        '
-        Me.DownloadingToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DownloadVideoToolStripMenuItem, Me.DownloadPlaylistToolStripMenuItem, Me.DownloadFromListToolStripMenuItem})
-        Me.DownloadingToolStripMenuItem.Font = New System.Drawing.Font("Arial", 9.0!)
-        Me.DownloadingToolStripMenuItem.Name = "DownloadingToolStripMenuItem"
-        Me.DownloadingToolStripMenuItem.Size = New System.Drawing.Size(92, 20)
-        Me.DownloadingToolStripMenuItem.Text = "Downloading"
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DownloadVideoToolStripMenuItem, Me.DownloadPlaylistToolStripMenuItem, Me.DownloadFromListToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
+        Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(46, 20)
+        Me.ToolsToolStripMenuItem.Text = "&Tools"
         '
         'DownloadVideoToolStripMenuItem
         '
         Me.DownloadVideoToolStripMenuItem.Name = "DownloadVideoToolStripMenuItem"
         Me.DownloadVideoToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.D), System.Windows.Forms.Keys)
-        Me.DownloadVideoToolStripMenuItem.Size = New System.Drawing.Size(236, 22)
-        Me.DownloadVideoToolStripMenuItem.Text = "Download Video"
+        Me.DownloadVideoToolStripMenuItem.Size = New System.Drawing.Size(273, 22)
+        Me.DownloadVideoToolStripMenuItem.Text = "&Download a video"
         '
         'DownloadPlaylistToolStripMenuItem
         '
         Me.DownloadPlaylistToolStripMenuItem.Name = "DownloadPlaylistToolStripMenuItem"
-        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(236, 22)
-        Me.DownloadPlaylistToolStripMenuItem.Text = "Download Playlist or Channel"
+        Me.DownloadPlaylistToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F), System.Windows.Forms.Keys)
+        Me.DownloadPlaylistToolStripMenuItem.Size = New System.Drawing.Size(273, 22)
+        Me.DownloadPlaylistToolStripMenuItem.Text = "&Download a playlist of channel"
         '
         'DownloadFromListToolStripMenuItem
         '
         Me.DownloadFromListToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EnterInMultipleURLsToolStripMenuItem, Me.OpenFileOfURLsToolStripMenuItem})
         Me.DownloadFromListToolStripMenuItem.Name = "DownloadFromListToolStripMenuItem"
-        Me.DownloadFromListToolStripMenuItem.Size = New System.Drawing.Size(236, 22)
-        Me.DownloadFromListToolStripMenuItem.Text = "Download from List"
+        Me.DownloadFromListToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.G), System.Windows.Forms.Keys)
+        Me.DownloadFromListToolStripMenuItem.Size = New System.Drawing.Size(273, 22)
+        Me.DownloadFromListToolStripMenuItem.Text = "&Download from list"
         '
         'EnterInMultipleURLsToolStripMenuItem
         '
         Me.EnterInMultipleURLsToolStripMenuItem.Name = "EnterInMultipleURLsToolStripMenuItem"
-        Me.EnterInMultipleURLsToolStripMenuItem.Size = New System.Drawing.Size(198, 22)
+        Me.EnterInMultipleURLsToolStripMenuItem.Size = New System.Drawing.Size(187, 22)
         Me.EnterInMultipleURLsToolStripMenuItem.Text = "Enter in multiple URLs"
         '
         'OpenFileOfURLsToolStripMenuItem
         '
         Me.OpenFileOfURLsToolStripMenuItem.Name = "OpenFileOfURLsToolStripMenuItem"
-        Me.OpenFileOfURLsToolStripMenuItem.Size = New System.Drawing.Size(198, 22)
+        Me.OpenFileOfURLsToolStripMenuItem.Size = New System.Drawing.Size(187, 22)
         Me.OpenFileOfURLsToolStripMenuItem.Text = "Open file of URLs"
         '
-        'HelpToolStripMenuItem
+        'HelpToolStripMenuItem1
         '
-        Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ViewOnGithubToolStripMenuItem, Me.ReportBugToolStripMenuItem, Me.AboutToolStripMenuItem})
-        Me.HelpToolStripMenuItem.Font = New System.Drawing.Font("Arial", 9.0!)
-        Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
-        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(45, 20)
-        Me.HelpToolStripMenuItem.Text = "Help"
+        Me.HelpToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ViewOnGithubToolStripMenuItem, Me.ReportBugToolStripMenuItem, Me.ToolStripSeparator1, Me.CheckForUpdatesToolStripMenuItem, Me.toolStripSeparator5, Me.AboutToolStripMenuItem})
+        Me.HelpToolStripMenuItem1.Name = "HelpToolStripMenuItem1"
+        Me.HelpToolStripMenuItem1.Size = New System.Drawing.Size(43, 20)
+        Me.HelpToolStripMenuItem1.Text = "&Help"
+        '
+        'ViewOnGithubToolStripMenuItem
+        '
+        Me.ViewOnGithubToolStripMenuItem.Name = "ViewOnGithubToolStripMenuItem"
+        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(156, 22)
+        Me.ViewOnGithubToolStripMenuItem.Text = "&View on GitHub"
         '
         'ReportBugToolStripMenuItem
         '
         Me.ReportBugToolStripMenuItem.Name = "ReportBugToolStripMenuItem"
-        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.ReportBugToolStripMenuItem.Text = "Report a bug"
+        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(156, 22)
+        Me.ReportBugToolStripMenuItem.Text = "&Issues"
+        '
+        'toolStripSeparator5
+        '
+        Me.toolStripSeparator5.Name = "toolStripSeparator5"
+        Me.toolStripSeparator5.Size = New System.Drawing.Size(153, 6)
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
+        Me.AboutToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Shift Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
         Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.AboutToolStripMenuItem.Text = "About"
+        Me.AboutToolStripMenuItem.Text = "&About..."
         '
         'MainSplitter
         '
-        Me.MainSplitter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.MainSplitter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.MainSplitter.Dock = System.Windows.Forms.DockStyle.Fill
         Me.MainSplitter.IsSplitterFixed = True
         Me.MainSplitter.Location = New System.Drawing.Point(0, 24)
@@ -191,140 +234,56 @@ Partial Class MainForm
         '
         'MainSplitter.Panel1
         '
+        Me.MainSplitter.Panel1.BackColor = System.Drawing.SystemColors.Control
         Me.MainSplitter.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-        Me.MainSplitter.Panel1.Controls.Add(Me.TableLayoutPanel1)
-        Me.MainSplitter.Panel1.Controls.Add(Me.VideoListLayout)
+        Me.MainSplitter.Panel1.Controls.Add(Me.TableLayoutPanel2)
+        Me.MainSplitter.Panel1.Margin = New System.Windows.Forms.Padding(1)
         Me.MainSplitter.Panel1MinSize = 100
         '
         'MainSplitter.Panel2
         '
+        Me.MainSplitter.Panel2.BackColor = System.Drawing.SystemColors.Control
         Me.MainSplitter.Panel2.Controls.Add(Me.DownloadingLayout)
         Me.MainSplitter.Panel2MinSize = 100
         Me.MainSplitter.Size = New System.Drawing.Size(683, 661)
         Me.MainSplitter.SplitterDistance = 546
         Me.MainSplitter.TabIndex = 1
         '
-        'TableLayoutPanel1
+        'TableLayoutPanel2
         '
-        Me.TableLayoutPanel1.AutoSize = True
-        Me.TableLayoutPanel1.BackColor = System.Drawing.SystemColors.Control
-        Me.TableLayoutPanel1.ColumnCount = 1
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.TableLayoutPanel1.Controls.Add(Me.Play, 0, 2)
-        Me.TableLayoutPanel1.Controls.Add(Me.Delete, 0, 3)
-        Me.TableLayoutPanel1.Controls.Add(Me.Show_in_folder, 0, 4)
-        Me.TableLayoutPanel1.Controls.Add(Me.Redownload, 0, 5)
-        Me.TableLayoutPanel1.Controls.Add(Me.LabelActions, 0, 0)
-        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Right
-        Me.TableLayoutPanel1.Font = New System.Drawing.Font("Arial", 8.25!)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(580, 0)
-        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 11
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.73214!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 223.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8.0!))
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 137.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(99, 542)
-        Me.TableLayoutPanel1.TabIndex = 1
+        Me.TableLayoutPanel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+        Me.TableLayoutPanel2.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
+        Me.TableLayoutPanel2.ColumnCount = 2
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.57771!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.42229!))
+        Me.TableLayoutPanel2.Controls.Add(Me.Label1, 1, 0)
+        Me.TableLayoutPanel2.Controls.Add(Me.VideoList, 0, 1)
+        Me.TableLayoutPanel2.Controls.Add(Me.Label2, 0, 0)
+        Me.TableLayoutPanel2.Controls.Add(Me.Panel1, 1, 1)
+        Me.TableLayoutPanel2.Location = New System.Drawing.Point(-1, -1)
+        Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
+        Me.TableLayoutPanel2.RowCount = 2
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(683, 545)
+        Me.TableLayoutPanel2.TabIndex = 6
         '
-        'Play
+        'Label1
         '
-        Me.Play.AutoSize = True
-        Me.Play.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Play.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.Play.Location = New System.Drawing.Point(3, 46)
-        Me.Play.Name = "Play"
-        Me.Play.Size = New System.Drawing.Size(93, 24)
-        Me.Play.TabIndex = 0
-        Me.Play.Text = "Play"
-        Me.Play.UseVisualStyleBackColor = True
-        '
-        'Delete
-        '
-        Me.Delete.AutoSize = True
-        Me.Delete.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Delete.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.Delete.Location = New System.Drawing.Point(3, 77)
-        Me.Delete.Name = "Delete"
-        Me.Delete.Size = New System.Drawing.Size(93, 22)
-        Me.Delete.TabIndex = 1
-        Me.Delete.Text = "Delete"
-        Me.Delete.UseVisualStyleBackColor = True
-        '
-        'Show_in_folder
-        '
-        Me.Show_in_folder.AutoSize = True
-        Me.Show_in_folder.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Show_in_folder.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.Show_in_folder.Location = New System.Drawing.Point(3, 105)
-        Me.Show_in_folder.Name = "Show_in_folder"
-        Me.Show_in_folder.Size = New System.Drawing.Size(93, 22)
-        Me.Show_in_folder.TabIndex = 3
-        Me.Show_in_folder.Text = "Show in folder"
-        Me.Show_in_folder.UseVisualStyleBackColor = True
-        '
-        'Redownload
-        '
-        Me.Redownload.AutoSize = True
-        Me.Redownload.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.Redownload.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.Redownload.Location = New System.Drawing.Point(3, 133)
-        Me.Redownload.Name = "Redownload"
-        Me.Redownload.Size = New System.Drawing.Size(93, 24)
-        Me.Redownload.TabIndex = 4
-        Me.Redownload.Text = "Redownload"
-        Me.Redownload.UseVisualStyleBackColor = True
-        '
-        'LabelActions
-        '
-        Me.LabelActions.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.LabelActions.AutoSize = True
-        Me.LabelActions.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.LabelActions.Location = New System.Drawing.Point(10, 11)
-        Me.LabelActions.Name = "LabelActions"
-        Me.LabelActions.Size = New System.Drawing.Size(78, 13)
-        Me.LabelActions.TabIndex = 5
-        Me.LabelActions.Text = "Video Actions"
-        Me.LabelActions.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'VideoListLayout
-        '
-        Me.VideoListLayout.ColumnCount = 1
-        Me.VideoListLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.VideoListLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122.0!))
-        Me.VideoListLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73.0!))
-        Me.VideoListLayout.Controls.Add(Me.VideoListLabel, 0, 0)
-        Me.VideoListLayout.Controls.Add(Me.VideoList, 0, 1)
-        Me.VideoListLayout.Location = New System.Drawing.Point(-2, -2)
-        Me.VideoListLayout.Name = "VideoListLayout"
-        Me.VideoListLayout.RowCount = 2
-        Me.VideoListLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33.0!))
-        Me.VideoListLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.VideoListLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.VideoListLayout.Size = New System.Drawing.Size(588, 544)
-        Me.VideoListLayout.TabIndex = 0
-        '
-        'VideoListLabel
-        '
-        Me.VideoListLabel.AutoSize = True
-        Me.VideoListLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.VideoListLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.VideoListLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
-        Me.VideoListLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.VideoListLabel.Location = New System.Drawing.Point(3, 0)
-        Me.VideoListLabel.Name = "VideoListLabel"
-        Me.VideoListLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.VideoListLabel.Size = New System.Drawing.Size(582, 33)
-        Me.VideoListLabel.TabIndex = 0
-        Me.VideoListLabel.Text = "Video List"
-        Me.VideoListLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.Label1.AutoSize = True
+        Me.Label1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label1.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label1.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_sound
+        Me.Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.Label1.Location = New System.Drawing.Point(573, 1)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label1.Size = New System.Drawing.Size(106, 21)
+        Me.Label1.TabIndex = 3
+        Me.Label1.Text = "Video Actions"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'VideoList
         '
@@ -332,9 +291,9 @@ Partial Class MainForm
         Me.VideoList.HideSelection = False
         Me.VideoList.LabelWrap = False
         Me.VideoList.LargeImageList = Me.VideoIconList
-        Me.VideoList.Location = New System.Drawing.Point(3, 36)
+        Me.VideoList.Location = New System.Drawing.Point(4, 26)
         Me.VideoList.Name = "VideoList"
-        Me.VideoList.Size = New System.Drawing.Size(582, 505)
+        Me.VideoList.Size = New System.Drawing.Size(562, 515)
         Me.VideoList.SmallImageList = Me.VideoIconList
         Me.VideoList.TabIndex = 1
         Me.VideoList.UseCompatibleStateImageBehavior = False
@@ -346,8 +305,92 @@ Partial Class MainForm
         Me.VideoIconList.ImageSize = New System.Drawing.Size(32, 32)
         Me.VideoIconList.TransparentColor = System.Drawing.Color.Transparent
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Label2.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label2.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
+        Me.Label2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.Label2.Location = New System.Drawing.Point(4, 1)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
+        Me.Label2.Size = New System.Drawing.Size(562, 21)
+        Me.Label2.TabIndex = 1
+        Me.Label2.Text = "Video List"
+        Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        '
+        'Panel1
+        '
+        Me.Panel1.Controls.Add(Me.Version_Label_Main_Window)
+        Me.Panel1.Controls.Add(Me.Play)
+        Me.Panel1.Controls.Add(Me.Redownload)
+        Me.Panel1.Controls.Add(Me.Delete)
+        Me.Panel1.Controls.Add(Me.Show_in_folder)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel1.Location = New System.Drawing.Point(573, 26)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(106, 515)
+        Me.Panel1.TabIndex = 5
+        '
+        'Version_Label_Main_Window
+        '
+        Me.Version_Label_Main_Window.AutoSize = True
+        Me.Version_Label_Main_Window.ForeColor = System.Drawing.SystemColors.ControlDark
+        Me.Version_Label_Main_Window.Location = New System.Drawing.Point(25, 489)
+        Me.Version_Label_Main_Window.Name = "Version_Label_Main_Window"
+        Me.Version_Label_Main_Window.Size = New System.Drawing.Size(50, 13)
+        Me.Version_Label_Main_Window.TabIndex = 5
+        Me.Version_Label_Main_Window.Text = "V 1.4.0.2"
+        '
+        'Play
+        '
+        Me.Play.AutoSize = True
+        Me.Play.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Play.Location = New System.Drawing.Point(7, 3)
+        Me.Play.Name = "Play"
+        Me.Play.Size = New System.Drawing.Size(93, 23)
+        Me.Play.TabIndex = 0
+        Me.Play.Text = "Play"
+        Me.Play.UseVisualStyleBackColor = True
+        '
+        'Redownload
+        '
+        Me.Redownload.AutoSize = True
+        Me.Redownload.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Redownload.Location = New System.Drawing.Point(7, 90)
+        Me.Redownload.Name = "Redownload"
+        Me.Redownload.Size = New System.Drawing.Size(93, 23)
+        Me.Redownload.TabIndex = 4
+        Me.Redownload.Text = "Redownload"
+        Me.Redownload.UseVisualStyleBackColor = True
+        '
+        'Delete
+        '
+        Me.Delete.AutoSize = True
+        Me.Delete.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Delete.Location = New System.Drawing.Point(7, 32)
+        Me.Delete.Name = "Delete"
+        Me.Delete.Size = New System.Drawing.Size(93, 23)
+        Me.Delete.TabIndex = 1
+        Me.Delete.Text = "Delete"
+        Me.Delete.UseVisualStyleBackColor = True
+        '
+        'Show_in_folder
+        '
+        Me.Show_in_folder.AutoSize = True
+        Me.Show_in_folder.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Show_in_folder.Location = New System.Drawing.Point(7, 61)
+        Me.Show_in_folder.Name = "Show_in_folder"
+        Me.Show_in_folder.Size = New System.Drawing.Size(93, 23)
+        Me.Show_in_folder.TabIndex = 3
+        Me.Show_in_folder.Text = "Show in folder"
+        Me.Show_in_folder.UseVisualStyleBackColor = True
+        '
         'DownloadingLayout
         '
+        Me.DownloadingLayout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+        Me.DownloadingLayout.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.DownloadingLayout.ColumnCount = 2
         Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -355,13 +398,13 @@ Partial Class MainForm
         Me.DownloadingLayout.Controls.Add(Me.QueueLabel, 0, 0)
         Me.DownloadingLayout.Controls.Add(Me.QueueBox, 0, 1)
         Me.DownloadingLayout.Controls.Add(Me.CurDLPanel, 1, 1)
-        Me.DownloadingLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DownloadingLayout.Location = New System.Drawing.Point(0, 0)
+        Me.DownloadingLayout.Location = New System.Drawing.Point(-1, 0)
         Me.DownloadingLayout.Name = "DownloadingLayout"
-        Me.DownloadingLayout.RowCount = 2
+        Me.DownloadingLayout.RowCount = 3
         Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21.0!))
         Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.DownloadingLayout.Size = New System.Drawing.Size(679, 107)
+        Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.DownloadingLayout.Size = New System.Drawing.Size(683, 131)
         Me.DownloadingLayout.TabIndex = 0
         '
         'CurDLLabel
@@ -371,7 +414,7 @@ Partial Class MainForm
         Me.CurDLLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.CurDLLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_computer_link
         Me.CurDLLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.CurDLLabel.Location = New System.Drawing.Point(342, 0)
+        Me.CurDLLabel.Location = New System.Drawing.Point(345, 1)
         Me.CurDLLabel.Name = "CurDLLabel"
         Me.CurDLLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
         Me.CurDLLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -386,10 +429,10 @@ Partial Class MainForm
         Me.QueueLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.QueueLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_arrow_down
         Me.QueueLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.QueueLabel.Location = New System.Drawing.Point(3, 0)
+        Me.QueueLabel.Location = New System.Drawing.Point(4, 1)
         Me.QueueLabel.Name = "QueueLabel"
         Me.QueueLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.QueueLabel.Size = New System.Drawing.Size(333, 21)
+        Me.QueueLabel.Size = New System.Drawing.Size(334, 21)
         Me.QueueLabel.TabIndex = 1
         Me.QueueLabel.Text = "Downloading Queue"
         '
@@ -401,9 +444,9 @@ Partial Class MainForm
         Me.QueueBox.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.QueueBox.FormattingEnabled = True
         Me.QueueBox.Items.AddRange(New Object() {"Video 1", "Video 2", "Another Video", "More Videos"})
-        Me.QueueBox.Location = New System.Drawing.Point(3, 24)
+        Me.QueueBox.Location = New System.Drawing.Point(4, 26)
         Me.QueueBox.Name = "QueueBox"
-        Me.QueueBox.Size = New System.Drawing.Size(333, 80)
+        Me.QueueBox.Size = New System.Drawing.Size(334, 80)
         Me.QueueBox.TabIndex = 4
         '
         'QueueMenu
@@ -446,7 +489,7 @@ Partial Class MainForm
         Me.CurDLPanel.Controls.Add(Me.CurDLProgress)
         Me.CurDLPanel.Controls.Add(Me.CurDLCancel)
         Me.CurDLPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.CurDLPanel.Location = New System.Drawing.Point(342, 24)
+        Me.CurDLPanel.Location = New System.Drawing.Point(345, 26)
         Me.CurDLPanel.Name = "CurDLPanel"
         Me.CurDLPanel.Size = New System.Drawing.Size(334, 80)
         Me.CurDLPanel.TabIndex = 5
@@ -455,7 +498,7 @@ Partial Class MainForm
         '
         Me.DLQueuedVidsBtn.Font = New System.Drawing.Font("Arial", 9.0!)
         Me.DLQueuedVidsBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.DLQueuedVidsBtn.Location = New System.Drawing.Point(3, 39)
+        Me.DLQueuedVidsBtn.Location = New System.Drawing.Point(2, 39)
         Me.DLQueuedVidsBtn.Name = "DLQueuedVidsBtn"
         Me.DLQueuedVidsBtn.Size = New System.Drawing.Size(232, 23)
         Me.DLQueuedVidsBtn.TabIndex = 5
@@ -514,11 +557,16 @@ Partial Class MainForm
         Me.SaveQueueDialog.Filter = "DuckDL Video Queue|*.ddq"
         Me.SaveQueueDialog.Title = "Save video queue"
         '
-        'ViewOnGithubToolStripMenuItem
+        'CheckForUpdatesToolStripMenuItem
         '
-        Me.ViewOnGithubToolStripMenuItem.Name = "ViewOnGithubToolStripMenuItem"
-        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.ViewOnGithubToolStripMenuItem.Text = "View on GitHub"
+        Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Updates..."
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
         '
         'MainForm
         '
@@ -539,14 +587,13 @@ Partial Class MainForm
         Me.MainMenu.ResumeLayout(False)
         Me.MainMenu.PerformLayout()
         Me.MainSplitter.Panel1.ResumeLayout(False)
-        Me.MainSplitter.Panel1.PerformLayout()
         Me.MainSplitter.Panel2.ResumeLayout(False)
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MainSplitter.ResumeLayout(False)
-        Me.TableLayoutPanel1.ResumeLayout(False)
-        Me.TableLayoutPanel1.PerformLayout()
-        Me.VideoListLayout.ResumeLayout(False)
-        Me.VideoListLayout.PerformLayout()
+        Me.TableLayoutPanel2.ResumeLayout(False)
+        Me.TableLayoutPanel2.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.DownloadingLayout.ResumeLayout(False)
         Me.DownloadingLayout.PerformLayout()
         Me.QueueMenu.ResumeLayout(False)
@@ -556,30 +603,19 @@ Partial Class MainForm
 
     End Sub
     Friend WithEvents MainMenu As System.Windows.Forms.MenuStrip
-    Friend WithEvents FileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents MainSplitter As System.Windows.Forms.SplitContainer
-    Friend WithEvents VideoListLayout As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents AddVideoFromFileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents DownloadingToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents DownloadVideoToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents DownloadPlaylistToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DownloadingLayout As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents CurDLLabel As System.Windows.Forms.Label
     Friend WithEvents QueueLabel As System.Windows.Forms.Label
     Friend WithEvents QueueBox As System.Windows.Forms.ListBox
     Friend WithEvents CurDLPanel As System.Windows.Forms.Panel
-    Friend WithEvents DownloadFromListToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CurDLCancel As System.Windows.Forms.Button
     Friend WithEvents VideoIconList As System.Windows.Forms.ImageList
-    Friend WithEvents OpenLibraryToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CurDLProgress As System.Windows.Forms.Label
     Friend WithEvents QueueMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents RemoveSelectedToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DLQueuedVidsBtn As System.Windows.Forms.Button
     Friend WithEvents AddFileDialog As System.Windows.Forms.OpenFileDialog
-    Friend WithEvents EnterInMultipleURLsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents OpenFileOfURLsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenURLListDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents LifeCheck As System.Windows.Forms.Timer
     Friend WithEvents ClearAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -587,16 +623,34 @@ Partial Class MainForm
     Friend WithEvents LoadQueueToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenQueueDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents SaveQueueDialog As System.Windows.Forms.SaveFileDialog
-    Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ReportBugToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
+    Friend WithEvents Show_in_folder As Button
+    Friend WithEvents VideoList As ListView
     Friend WithEvents Play As Button
     Friend WithEvents Delete As Button
-    Friend WithEvents Show_in_folder As Button
     Friend WithEvents Redownload As Button
-    Friend WithEvents VideoListLabel As Label
-    Friend WithEvents VideoList As ListView
-    Friend WithEvents LabelActions As Label
+    Friend WithEvents FileToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents AddVideoFromFileToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OpenLibraryToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents toolStripSeparator As ToolStripSeparator
+    Friend WithEvents PreferencesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents toolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents ExitToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents DownloadVideoToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents DownloadPlaylistToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents HelpToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents ViewOnGithubToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ReportBugToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents toolStripSeparator5 As ToolStripSeparator
+    Friend WithEvents AboutToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TableLayoutPanel2 As TableLayoutPanel
+    Friend WithEvents Label1 As Label
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents Version_Label_Main_Window As Label
+    Friend WithEvents DownloadFromListToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents EnterInMultipleURLsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OpenFileOfURLsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents CheckForUpdatesToolStripMenuItem As ToolStripMenuItem
 End Class

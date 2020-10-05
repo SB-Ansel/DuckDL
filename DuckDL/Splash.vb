@@ -8,8 +8,7 @@
     '    If InvokeRequired Then
     '        Invoke(New MethodInvoker(AddressOf UpdateProgress))
     '    Else
-    '        ProgressBar.PerformStep()
+    '        ProgressBar1.PerformStep()
     '    End If
-    '    ' Thanks  jmcilhinney <3
     'End Sub
 End Class

@@ -1,7 +1,7 @@
 ﻿Imports System.Net
-
 Public Class MainForm
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
+    'Public Const YT_URL_FORMAT As String = "{0}"
     Public Const FORMAT_UNKNOWN As Integer = -1
     Public Const FORMAT_BEST As Integer = -2
     Public Const FORMAT_BESTAUDIO As Integer = -3
@@ -37,19 +37,23 @@ Public Class MainForm
             End Set
         End Property
 
-        Public Format As Integer
+        'Public Format As Integer
+        Public Format As String
 
         Public Overrides Function ToString() As String
-            Return Url & ";" & Name & ";" & CStr(Format)
+            Return Url & ";" & Name & ";" & Format
         End Function
 
         Public Sub New()
             _url = ""
             _name = ""
-            Format = 0
+            'Format = 0
+            Format = ""
+
         End Sub
 
-        Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As Integer)
+        'Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As Integer)
+        Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As String)
             Url = __url
             Name = __name
             Format = __format
@@ -61,6 +65,7 @@ Public Class MainForm
                 Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
             End If
             Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
+
             Dim _format As String = fPieces(fPieces.Count - 3)
             If Not IsNumeric(_format) Then
                 Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
@@ -94,23 +99,20 @@ Public Class MainForm
     Private Icn_Film As Bitmap = My.Resources.icn_film
     Private Icn_Sound As Bitmap = My.Resources.icn_sound
 
-    'SB-Ansel - Checks registry for dependancy
-    Private Sub Microsoft_VC2010_Check() Handles MyBase.Load 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
+    'SB-Ansel - 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
+    Private Sub Microsoft_VC2010_Check() Handles MyBase.Load
         Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86", "Version", Nothing)
         If regKey Is Nothing Then
             VC2010_MSGBOX()
             Process.Start(Application.StartupPath() & "vcredist_x86.exe")
-            'Process.Start("C:\Program Files (x86)\DuckDL\vcredist_x86.exe")
         Else
-            '-SB-Ansel - Easy way of automatically updating youtube-dl
-            'Shell("youtube-dl.exe --update")
-
-            ' SB-Ansel - Splash screen progress bar and YT-DL update check.
-            PerformInitialisation()
+            'Continue with application load to main screen etc
+            Shell("youtube-dl.exe --update") '-SB-Ansel - This is shit but it's an easy way of automatically updating youtube-dl in the background for now.
         End If
     End Sub
     'SB-Ansel - Popbox to prompt the user to install C++ Redist package.
-    Private Sub VC2010_MSGBOX() 'Handles MyBase.Load
+    Private Sub VC2010_MSGBOX()
+        REM TODO: Simplify this statement to be inline with Microsoft_VC2010_Check()
         Dim result = MessageBox.Show("DuckDL requires Microsoft Visual C++ 2010 redistributable package (x86) in order to work properly, by pressing ok DuckDL will close and will automatically install Microsoft Visuall C++ 2010 for you.", "Microsoft Visual C++ 2010 required!", MessageBoxButtons.OK)
         Close()
     End Sub
@@ -129,33 +131,13 @@ Public Class MainForm
         UpdateDLButton()
         GetDownloadedVideos()
     End Sub
-    Public Sub PerformInitialisation()
-        Dim p = New Process
-        Dim s As String = ""
-        With p.StartInfo
-            .FileName = Application.StartupPath() & "\youtube-dl.exe"
-            .Arguments = " -U"
-            .UseShellExecute = False
-            .RedirectStandardOutput = True
-            .CreateNoWindow = True
-            p.EnableRaisingEvents = True
-        End With
-        p.Start()
-        Cursor = Cursors.WaitCursor 'change cursor to hourglass type
-        'While p.HasExited = False
-        '    Console.WriteLine(p.StandardOutput.ReadToEnd)
-        '    'DirectCast(My.Application.SplashScreen, Splash).UpdateProgress()
-        'End While
-        p.WaitForExit()
-        Cursor = Cursors.Arrow 'change cursor To normal type
-    End Sub
-
     Private Sub MainForm_Closing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         SaveQueue(QueueLocation)
     End Sub
 
     Function GetVideoName(url As String) As String
-        Return GetVideoInfo("--get-title", url, "Getting name of " & url.Split("=").Last)
+        'Return GetVideoInfo("--get-title", url, "Getting name of " & url.Split("=").Last)
+        Return GetVideoInfo("--get-title", url)
     End Function
 
     Function GetVideoThumbnail(url As String) As Bitmap
@@ -223,36 +205,19 @@ Public Class MainForm
             DLQueuedVidsBtn.Enabled = True
             DLQueuedVidsBtn.Image = Icn_Delete
             DLQueuedVidsBtn.Text = "Stop downloading from Queue"
-            'Console.WriteLine("Debug 1")
         Else
             If VideoQueue.Count > 0 Then
                 DLQueuedVidsBtn.Enabled = True
                 DLQueuedVidsBtn.Image = Icn_Download
                 DLQueuedVidsBtn.Text = "Start downloading Queue"
-                'Console.WriteLine("Debug 2")
             Else
                 DLQueuedVidsBtn.Enabled = False
                 DLQueuedVidsBtn.Image = Nothing
                 DLQueuedVidsBtn.Text = "Add videos to your Queue!"
-                'Console.WriteLine("Debug 3")
             End If
         End If
     End Sub
 
-    Private Sub DownloadVideoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DownloadVideoToolStripMenuItem.Click
-        Dim url As String = InputBox("Enter video URL:", "Download Video")
-        If url <> "" Then
-            'If UrlIsValid(url) And url.Contains("?v=") Then
-            If UrlIsValid(url) Then ' SB-Ansel - removing url.Contains("?v=") allows the user to now utilise the shortend youtube URL format, https//youtu.be/
-                url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
-                Dim fmt As Integer = PromptForFormat(url)
-                If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(New VideoDownload(url, GetVideoName(url), fmt))
-            Else
-                MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
-            End If
-        End If
-
-    End Sub
     Dim dldr As Process
     Dim curDL As VideoDownload
     Sub DownloadVideo(v2d As VideoDownload)
@@ -267,6 +232,7 @@ Public Class MainForm
             End If
         End If
         If curDL.Format = FORMAT_BEST Then
+            Console.WriteLine("Logging best")
             formatString = " -f best "
         End If
         If curDL.Format = FORMAT_BESTAUDIO Then
@@ -276,6 +242,8 @@ Public Class MainForm
             formatString = " -f " + FormatDialog.Custom_Command + " "
         End If
         If formatString = "DEADBEEF" Then
+            'formatString = " -f " & curDL.Format & " "
+            Console.WriteLine("Logging")
             formatString = " -f " & curDL.Format & " "
         End If
         Downloading = True
@@ -289,6 +257,7 @@ Public Class MainForm
         dldr.StartInfo.WorkingDirectory = LibraryLocation
         dldr.StartInfo.CreateNoWindow = True
         AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
+        'AddHandler dldr.Exited, AddressOf DownloadDone
         'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
         dldr.Start()
         dldr.BeginOutputReadLine()
@@ -316,11 +285,11 @@ Public Class MainForm
     End Sub
     ' Check to see if the suppiled URL is a real youtube URL.
     Private Function UrlIsValid(ByVal url As String) As Boolean
-        ' Dim is_valid As Boolean = False - appears to be unused
         If url.ToLower().StartsWith("www.") Then url = "http://" & url
+        'Console.WriteLine(url)
         Dim web_response As HttpWebResponse = Nothing
         Try
-            Dim web_request As HttpWebRequest = HttpWebRequest.Create(url)
+            Dim web_request As HttpWebRequest = WebRequest.Create(url)
             web_response = DirectCast(web_request.GetResponse(), HttpWebResponse)
             Return True
         Catch ex As Exception
@@ -357,8 +326,15 @@ Public Class MainForm
     Private Sub CurDLCancel_Click(sender As Object, e As EventArgs) Handles CurDLCancel.Click
         dldr.Kill()
         'CheckForRunningProcess()
-        'DownloadDone() SB-Ansel - This isn't supposed to be here.
+        'DownloadDone() SB-Ansel - This isn't supposed to be here, this causes an unhandled exception in DuckDL version qc_fix.
         CleanPartFiles()
+    End Sub
+    Sub CleanPartFiles()
+        For Each file As String In IO.Directory.EnumerateFiles(LibraryLocation)
+            If file.ToUpper.EndsWith("PART") Then
+                IO.File.Delete(file)
+            End If
+        Next
     End Sub
 
     Private Sub DLQueuedVidsBtn_Click(sender As Object, e As EventArgs) Handles DLQueuedVidsBtn.Click
@@ -372,7 +348,7 @@ Public Class MainForm
             UpdateDLButton()
         End If
     End Sub
-
+    'SB-Ansel - Populate main window with icons in relation to file type.
     Sub GetDownloadedVideos()
         'Dim shinfo As SHFILEINFO
         'shinfo = New SHFILEINFO()
@@ -419,49 +395,14 @@ Public Class MainForm
         Next
     End Sub
 
-    Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
-        Close()
-    End Sub
-
-    Private Sub AddVideoFromFileToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddVideoFromFileToolStripMenuItem.Click
-        If AddFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            IO.File.Copy(AddFileDialog.FileName, LibraryLocation & "\" & FileNameFromPath(AddFileDialog.FileName))
-            GetDownloadedVideos()
-        End If
-    End Sub
-
-    Private Sub OpenLibraryFolder(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing) Handles OpenLibraryToolStripMenuItem.Click
-        Process.Start(LibraryLocation)
-    End Sub
-
-    Private Sub DownloadPlaylistToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
-        Dim url As String = InputBox("Enter the URL of the playlist you want to download:", "Download Playlist")
-        If url <> "" Then
-            If UrlIsValid(url) Then
-                Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
-                Dim u As String = ""
-                Dim fmt As Integer = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
-                If fmt <> FORMAT_UNKNOWN Then
-                    For Each vidID As String In vidIDs
-                        vidID = vidID.Trim()
-                        If vidID <> "" Then
-                            u = String.Format(YT_URL_FORMAT, vidID)
-                            AddVideoToQueue(New VideoDownload(u, GetVideoName(u), fmt))
-                        End If
-                    Next
-                End If
-            Else
-                MsgBox("Invalid playlist URL: " & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
-            End If
-        End If
-    End Sub
-
+    'SB-Ansel - Function GetVideoInfo, retrieves video info from youtube-dl to populate the avalable file formats window.
     Private Shared InfOut As Text.StringBuilder = Nothing
     Public Function GetVideoInfo(ByVal args As String, ByVal url As String, Optional ByVal progressTxt As String = "Downloading information...") As String
         InfOut = New Text.StringBuilder()
-        Dim NewProcess As New Diagnostics.Process()
-        Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
-        WaitDlg.Show()
+        Dim NewProcess As New Process()
+        'SB-Ansel - Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
+        'Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
+        'WaitDlg.Show()
         With NewProcess.StartInfo
             .FileName = Downloader
             .Arguments = args & " """ & url & """"
@@ -472,12 +413,16 @@ Public Class MainForm
             .WindowStyle = ProcessWindowStyle.Normal
             .CreateNoWindow = True
         End With
+        'Console.WriteLine("GetVideoInfo Activated!")
+        'Console.WriteLine(NewProcess.StartInfo.Arguments)
         ' Set our event handler to asynchronously read the sort output.
         AddHandler NewProcess.OutputDataReceived, AddressOf GetVideoInfo_OutputHandler
+        Cursor = Cursors.WaitCursor
         NewProcess.Start()
         NewProcess.BeginOutputReadLine()
         NewProcess.WaitForExit()
-        WaitDlg.Close()
+        Cursor = Cursors.Default
+        'WaitDlg.Close()
         Return InfOut.ToString
     End Function
 
@@ -486,6 +431,7 @@ Public Class MainForm
         If Not String.IsNullOrEmpty(outLine.Data) Then
             ' Add the text to the collected output.
             InfOut.AppendLine(outLine.Data)
+            'Console.WriteLine(InfOut)
         End If
     End Sub
 
@@ -496,10 +442,15 @@ Public Class MainForm
         Loop
     End Sub
 
+    REM SB-Ansel - This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
+    ' this section is supposed to take the filename, split it up to retrieve the video ID.
     Sub RedownloadSelectedVideo()
         If VideoList.SelectedItems.Count > 0 Then
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
+
+            'Console.WriteLine(String.Join(Environment.NewLine, fname))
+
             If fpieces.Count > 3 Then
                 If IsNumeric(fpieces(fpieces.Count - 3)) Then
                     Try
@@ -520,9 +471,7 @@ Public Class MainForm
 cannot:
         MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
     End Sub
-    Private Sub DownloadChannelToolStripMenuItem_Click(sender As Object, e As EventArgs)
-        MsgBox("Sorry, this is no longer supported by YouTube.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation)
-    End Sub
+
 
     Enum ContinueOrCancel
         Unknown = 0
@@ -558,36 +507,13 @@ NextLine:
         Next
     End Sub
 
-    Private Sub EnterInMultipleURLsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EnterInMultipleURLsToolStripMenuItem.Click
-        Dim tbd As New TextBoxDialog
-        tbd.Title = "Download Multiple"
-        tbd.Prompt = "Enter multiple video URLs, one per line: "
-        If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
-            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(tbd.Lines, fmt)
-        End If
-    End Sub
-
-    Private Sub OpenFileOfURLsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
-        If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
-            Dim fmt As Integer = PromptForFormat(lines(0))
-            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(lines, fmt)
-        End If
-    End Sub
-
-    Sub CleanPartFiles()
-        For Each file As String In IO.Directory.EnumerateFiles(LibraryLocation)
-            If file.ToUpper.EndsWith("PART") Then
-                IO.File.Delete(file)
-            End If
-        Next
-    End Sub
-
-
-    Public Shared Function PromptForFormat(ByVal url As String) As Integer
+    'SB-Ansel - Format Dialog box, select format to which to download the video in.
+    Public Shared Function PromptForFormat(ByVal url As String) As String
+        'Public Shared Function PromptForFormat(ByVal url As String) As Integer
         Dim dlg As New FormatDialog(url)
         If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
+            'Console.WriteLine("PromptForFormat Activated!")
+            'Console.WriteLine(dlg.SelectedFormat)
             Return dlg.SelectedFormat
         Else
             Return FORMAT_UNKNOWN
@@ -607,6 +533,10 @@ NextLine:
         Process.Start(path)
     End Sub
 
+    ' SB-Ansel - this works though..., appears to be unused.
+    'Private Sub DownloadChannelToolStripMenuItem_Click(sender As Object, e As EventArgs)
+    '    MsgBox("Sorry, this is no longer supported by YouTube.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation)
+    'End Sub
     Private Sub ClearAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClearAllToolStripMenuItem.Click
         VideoQueue.Clear()
         QueueBox.Items.Clear()
@@ -636,7 +566,7 @@ attempt_line:
                 ElseIf action = MsgBoxResult.Retry Then
                     GoTo attempt_line
                 Else
-                    ' Next line
+                    'Next line
                 End If
             End Try
             line = f.ReadLine
@@ -654,12 +584,8 @@ attempt_line:
             SaveQueue(SaveQueueDialog.FileName)
         End If
     End Sub
-    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        AboutBox1.Show()
-    End Sub
-    Private Sub ReportBugToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportBugToolStripMenuItem.Click
-        Process.Start("https://github.com/SB-Ansel/DuckDL/issues")
-    End Sub
+
+    ' Side tool menu
     Private Sub Play_Click_1(sender As Object, e As EventArgs) Handles Play.Click
         PlaySelectedVideos()
     End Sub
@@ -669,15 +595,107 @@ attempt_line:
     End Sub
 
     Private Sub Show_in_folder_Click(sender As Object, e As EventArgs) Handles Show_in_folder.Click
-        OpenLibraryFolder()
+        Process.Start(LibraryLocation)
     End Sub
 
     Private Sub Redownload_Click(sender As Object, e As EventArgs) Handles Redownload.Click
         RedownloadSelectedVideo()
     End Sub
 
-    Private Sub ViewOnGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ViewOnGithubToolStripMenuItem.Click
+    'Private Sub Microsoft_VC2010_Check(sender As Object, e As EventArgs) Handles MyBase.Load
+    'End Sub
+
+    'Top tool menu
+    ' File button
+    Private Sub PreferencesToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles PreferencesToolStripMenuItem.Click
+        config1.Show()
+    End Sub
+
+    Private Sub ExitToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Close()
+    End Sub
+
+    Private Sub OpenLibraryToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenLibraryToolStripMenuItem.Click
+        Process.Start(LibraryLocation)
+    End Sub
+
+    Private Sub AddVideoFromFileToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles AddVideoFromFileToolStripMenuItem.Click
+        If AddFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            IO.File.Copy(AddFileDialog.FileName, LibraryLocation & "\" & FileNameFromPath(AddFileDialog.FileName))
+            GetDownloadedVideos()
+        End If
+    End Sub
+
+    '[Tools] - Downloads button
+
+    'If UrlIsValid(url) And url.Contains("?v=") Then
+    ' SB-Ansel - removing url.Contains("?v=") allows the user to now utilise the shortend youtube URL format, https//youtu.be/
+    'url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
+    'Dim fmt As Integer = PromptForFormat(url)
+
+    Private Sub DownloadVideoToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles DownloadVideoToolStripMenuItem.Click
+        Dim url As String = InputBox("Enter the URL of the video you want to download:", "Download a Video")
+        If url <> "" Then
+            If UrlIsValid(url) Then
+                'url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
+                Dim fmt As Integer = PromptForFormat(url)
+                If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(New VideoDownload(url, GetVideoName(url), fmt))
+            Else
+                MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
+            End If
+        End If
+    End Sub
+
+    Private Sub DownloadPlaylistToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
+        Dim url As String = InputBox("Enter the URL of the playlist you want to download:", "Download Playlist")
+        If url <> "" Then
+            If UrlIsValid(url) Then
+                Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
+                Dim u As String = ""
+                Dim fmt As Integer = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
+                If fmt <> FORMAT_UNKNOWN Then
+                    For Each vidID As String In vidIDs
+                        vidID = vidID.Trim()
+                        If vidID <> "" Then
+                            u = String.Format(YT_URL_FORMAT, vidID)
+                            AddVideoToQueue(New VideoDownload(u, GetVideoName(u), fmt))
+                        End If
+                    Next
+                End If
+            Else
+                MsgBox("Invalid playlist URL: " & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
+            End If
+        End If
+    End Sub
+
+    Private Sub EnterInMultipleURLsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EnterInMultipleURLsToolStripMenuItem.Click
+        Dim tbd As New TextBoxDialog With {
+            .Title = "Download Multiple",
+            .Prompt = "Enter multiple video URLs, one per line: "
+        }
+        If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
+            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(tbd.Lines, fmt)
+        End If
+    End Sub
+    Private Sub OpenFileOfURLsToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
+        If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
+            Dim fmt As Integer = PromptForFormat(lines(0))
+            If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(lines, fmt)
+        End If
+    End Sub
+
+    'Help button
+    Private Sub ViewOnGithubToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles ViewOnGithubToolStripMenuItem.Click
         Process.Start("https://github.com/SB-Ansel/DuckDL")
     End Sub
+
+    Private Sub ReportBugToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles ReportBugToolStripMenuItem.Click
+        Process.Start("https://github.com/SB-Ansel/DuckDL/issues")
+    End Sub
+
+    Private Sub AboutToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        AboutBox1.Show()
+    End Sub
 End Class
-'SB-Ansel - 08/27/2020 - DuckDL Build

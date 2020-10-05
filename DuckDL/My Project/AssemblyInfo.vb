@@ -13,7 +13,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Downloads videos from popular video-sharing sites")>
 <Assembly: AssemblyCompany("Electroduck, SB-Ansel")>
 <Assembly: AssemblyProduct("DuckDL Video Downloader")>
-<Assembly: AssemblyCopyright("Copyright © Electroduck 2015")>
+<Assembly: AssemblyCopyright("Electroduck 2015")>
 <Assembly: AssemblyTrademark("")>
 
 <Assembly: ComVisible(False)>
@@ -32,6 +32,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.4")>
-<Assembly: AssemblyFileVersion("1.4")>
+<Assembly: AssemblyVersion("1.4.0.1")>
+<Assembly: AssemblyFileVersion("1.4.0.1")>
 <Assembly: NeutralResourcesLanguage("en-US")>

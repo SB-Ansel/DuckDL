@@ -96,7 +96,6 @@ Partial Class FormatDialog
         Me.FormatList.Location = New System.Drawing.Point(15, 148)
         Me.FormatList.Name = "FormatList"
         Me.FormatList.Size = New System.Drawing.Size(576, 212)
-        Me.FormatList.Sorted = True
         Me.FormatList.TabIndex = 2
         '
         'Label4
