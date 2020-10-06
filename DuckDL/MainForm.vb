@@ -1,11 +1,11 @@
 ﻿Imports System.Net
 Public Class MainForm
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
-    'Public Const YT_URL_FORMAT As String = "{0}"
-    Public Const FORMAT_UNKNOWN As Integer = -1
-    Public Const FORMAT_BEST As Integer = -2
-    Public Const FORMAT_BESTAUDIO As Integer = -3
-    Public Const FORMAT_CUSTOM As Integer = -4
+
+    Public Const FORMAT_UNKNOWN As String = "FORMAT_UNKNOWN"
+    Public Const FORMAT_BEST As String = "FORMAT_BEST"
+    Public Const FORMAT_BESTAUDIO As String = "FORMAT_BESTAUDIO"
+    Public Const FORMAT_CUSTOM As String = "FORMAT_CUSTOM"
 
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
     Public Shared ReadOnly QueueLocation As String = LibraryLocation & "\_q.ddq"
@@ -239,12 +239,14 @@ Public Class MainForm
             formatString = " -f bestaudio "
         End If
         If curDL.Format = FORMAT_CUSTOM Then
+            Console.WriteLine("FORMAT_CUSTOM")
+            Console.WriteLine(FormatDialog.Custom_Command)
             formatString = " -f " + FormatDialog.Custom_Command + " "
         End If
         If formatString = "DEADBEEF" Then
-            'formatString = " -f " & curDL.Format & " "
-            Console.WriteLine("Logging")
+            Console.WriteLine("DownloadVideo_DEADBEEF")
             formatString = " -f " & curDL.Format & " "
+            Console.WriteLine(formatString)
         End If
         Downloading = True
         CurDLCancel.Enabled = True
@@ -257,7 +259,6 @@ Public Class MainForm
         dldr.StartInfo.WorkingDirectory = LibraryLocation
         dldr.StartInfo.CreateNoWindow = True
         AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
-        'AddHandler dldr.Exited, AddressOf DownloadDone
         'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
         dldr.Start()
         dldr.BeginOutputReadLine()
@@ -283,7 +284,7 @@ Public Class MainForm
             End If
         End If
     End Sub
-    ' Check to see if the suppiled URL is a real youtube URL.
+    ' SB-Ansel - Check to see if the suppiled URL is a real URL.
     Private Function UrlIsValid(ByVal url As String) As Boolean
         If url.ToLower().StartsWith("www.") Then url = "http://" & url
         'Console.WriteLine(url)
@@ -627,19 +628,14 @@ attempt_line:
     End Sub
 
     '[Tools] - Downloads button
-
-    'If UrlIsValid(url) And url.Contains("?v=") Then
-    ' SB-Ansel - removing url.Contains("?v=") allows the user to now utilise the shortend youtube URL format, https//youtu.be/
-    'url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
-    'Dim fmt As Integer = PromptForFormat(url)
-
     Private Sub DownloadVideoToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles DownloadVideoToolStripMenuItem.Click
         Dim url As String = InputBox("Enter the URL of the video you want to download:", "Download a Video")
         If url <> "" Then
             If UrlIsValid(url) Then
-                'url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
-                Dim fmt As Integer = PromptForFormat(url)
+                url = url.Split("&")(0) ' Prevents downloading of entire playlist when video is in a playlist
+                Dim fmt As String = PromptForFormat(url)
                 If fmt <> FORMAT_UNKNOWN Then AddVideoToQueue(New VideoDownload(url, GetVideoName(url), fmt))
+                Console.WriteLine(fmt)
             Else
                 MsgBox("Invalid video URL:" & vbNewLine & url, MsgBoxStyle.OkOnly + MsgBoxStyle.Critical)
             End If

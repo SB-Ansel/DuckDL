@@ -41,7 +41,6 @@ Public Class FormatDialog
         Dim fmtOutput As String = MainForm.GetVideoInfo("--list-formats", url, "Finding available formats...")
         Dim fmtLines As String() = fmtOutput.Split(vbNewLine)
         Dim colID As String
-        'Dim regex = New Regex("(-[0-9])\w+")
         Dim regex = New Regex("(format code)\W")
         Dim colFiletype As String
         Dim colSize As String
@@ -58,8 +57,6 @@ Public Class FormatDialog
                 colSize = fmtLine.Substring(24, 11).Trim
                 colNote = fmtLine.Substring(35).Trim
                 'Console.WriteLine(fmtLine)
-                'colID = Regex.Replace(colID, "([a-z]*\w-|\w_|[0-9]{12})", "")
-                'colID = Regex.Replace(colID, "(gif|webm|mp4|[a-z]*\w_|[a-z]*\w-|[0-9]{12})", "")
                 colID = Regex.Replace(colID, "([a-z]*\w,|[a-z]*\w_|[a-z]*\w-|[0-9]{12})", "") 'SB-Ansel - The problem is, Format code (colID) will not always be an integar value, so we'll have to change it to numeric.
                 'If IsNumeric(colID) Then
                 fmt = New Format With {
