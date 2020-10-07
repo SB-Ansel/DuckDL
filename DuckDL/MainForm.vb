@@ -493,7 +493,7 @@ cannot:
         Cancel = 2
     End Enum
 
-    Sub AddMultipleVideos(ByVal lines As String(), ByVal format As Integer)
+    Sub AddMultipleVideos(ByVal lines As String(), ByVal format As String)
         For Each line As String In lines
             If UrlIsValid(line) Then
                 AddVideoToQueue(New VideoDownload(line, GetVideoName(line), format))
@@ -664,7 +664,7 @@ attempt_line:
             If UrlIsValid(url) Then
                 Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
                 Dim u As String = ""
-                Dim fmt As Integer = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
+                Dim fmt As String = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
                 If fmt <> FORMAT_UNKNOWN Then
                     For Each vidID As String In vidIDs
                         vidID = vidID.Trim()
@@ -686,14 +686,14 @@ attempt_line:
             .Prompt = "Enter multiple video URLs, one per line: "
         }
         If tbd.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim fmt As Integer = PromptForFormat(tbd.Lines(0))
+            Dim fmt As String = PromptForFormat(tbd.Lines(0))
             If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(tbd.Lines, fmt)
         End If
     End Sub
     Private Sub OpenFileOfURLsToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
         If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
             Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
-            Dim fmt As Integer = PromptForFormat(lines(0))
+            Dim fmt As String = PromptForFormat(lines(0))
             If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(lines, fmt)
         End If
     End Sub
