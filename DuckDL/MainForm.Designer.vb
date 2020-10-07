@@ -75,6 +75,7 @@ Partial Class MainForm
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
         Me.OpenQueueDialog = New System.Windows.Forms.OpenFileDialog()
         Me.SaveQueueDialog = New System.Windows.Forms.SaveFileDialog()
+        Me.OpenInBrowser = New System.Windows.Forms.Button()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
@@ -202,36 +203,36 @@ Partial Class MainForm
         'ViewOnGithubToolStripMenuItem
         '
         Me.ViewOnGithubToolStripMenuItem.Name = "ViewOnGithubToolStripMenuItem"
-        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ViewOnGithubToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.ViewOnGithubToolStripMenuItem.Text = "&View on GitHub"
         '
         'ReportBugToolStripMenuItem
         '
         Me.ReportBugToolStripMenuItem.Name = "ReportBugToolStripMenuItem"
-        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ReportBugToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.ReportBugToolStripMenuItem.Text = "&Issues"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(175, 6)
         '
         'CheckForUpdatesToolStripMenuItem
         '
         Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
-        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Updates..."
         '
         'toolStripSeparator5
         '
         Me.toolStripSeparator5.Name = "toolStripSeparator5"
-        Me.toolStripSeparator5.Size = New System.Drawing.Size(177, 6)
+        Me.toolStripSeparator5.Size = New System.Drawing.Size(175, 6)
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
         Me.AboutToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Shift Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.AboutToolStripMenuItem.Text = "&About..."
         '
         'MainSplitter
@@ -333,6 +334,7 @@ Partial Class MainForm
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.OpenInBrowser)
         Me.Panel1.Controls.Add(Me.Version_Label_Main_Window)
         Me.Panel1.Controls.Add(Me.Play)
         Me.Panel1.Controls.Add(Me.Redownload)
@@ -568,6 +570,15 @@ Partial Class MainForm
         Me.SaveQueueDialog.Filter = "DuckDL Video Queue|*.ddq"
         Me.SaveQueueDialog.Title = "Save video queue"
         '
+        'OpenInBrowser
+        '
+        Me.OpenInBrowser.Location = New System.Drawing.Point(7, 120)
+        Me.OpenInBrowser.Name = "OpenInBrowser"
+        Me.OpenInBrowser.Size = New System.Drawing.Size(91, 23)
+        Me.OpenInBrowser.TabIndex = 6
+        Me.OpenInBrowser.Text = "Open in"
+        Me.OpenInBrowser.UseVisualStyleBackColor = True
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -653,4 +664,5 @@ Partial Class MainForm
     Friend WithEvents OpenFileOfURLsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents CheckForUpdatesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OpenInBrowser As Button
 End Class

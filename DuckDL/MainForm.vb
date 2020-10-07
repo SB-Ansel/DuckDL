@@ -1,6 +1,10 @@
 ﻿Imports System.Net
 Public Class MainForm
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
+    Public Const Twitter_URL_FORMAT As String = "https://twitter.com/i/status/{0}"
+    Public Const Instagram_URL_FORMAT As String = "https://www.instagram.com/p/CFv6MmIgC9V/?{0}"
+    Public Const Facebook_URL_FORMAT As String = "https://www.facebook.com/watch/?v={0}"
+    Public Const Reddit_URL_FORMAT As String = "https://www.reddit.com/r/{0}"
 
     Public Const FORMAT_UNKNOWN As String = "FORMAT_UNKNOWN"
     Public Const FORMAT_BEST As String = "FORMAT_BEST"
@@ -473,6 +477,15 @@ cannot:
         MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
     End Sub
 
+    REM SB-Ansel - This sections is supposed to open the selected video in the system associated web browser.
+    Sub OpenInWebBrowser() ' New feature.
+        'If VideoList.SelectedItems.Count > 0 Then
+        Dim fname As String = VideoList.SelectedItems(0).Text
+        Dim fpieces() As String = fname.Split("."c)
+        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+        Process.Start(dl.Url)
+    End Sub
+
 
     Enum ContinueOrCancel
         Unknown = 0
@@ -601,6 +614,9 @@ attempt_line:
 
     Private Sub Redownload_Click(sender As Object, e As EventArgs) Handles Redownload.Click
         RedownloadSelectedVideo()
+    End Sub
+    Private Sub OpenInBrowser_Click(sender As Object, e As EventArgs) Handles OpenInBrowser.Click
+        OpenInWebBrowser()
     End Sub
 
     'Private Sub Microsoft_VC2010_Check(sender As Object, e As EventArgs) Handles MyBase.Load
