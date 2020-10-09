@@ -1,8 +1,11 @@
 ﻿Imports System.Net
+Imports System.Text.RegularExpressions
 Public Class MainForm
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
     Public Const Twitter_URL_FORMAT As String = "https://twitter.com/i/status/{0}"
+
     Public Const Instagram_URL_FORMAT As String = "https://www.instagram.com/p/CFv6MmIgC9V/?{0}"
+
     Public Const Facebook_URL_FORMAT As String = "https://www.facebook.com/watch/?v={0}"
     Public Const Reddit_URL_FORMAT As String = "https://www.reddit.com/r/{0}"
 
@@ -41,7 +44,6 @@ Public Class MainForm
             End Set
         End Property
 
-        'Public Format As Integer
         Public Format As String
 
         Public Overrides Function ToString() As String
@@ -51,23 +53,22 @@ Public Class MainForm
         Public Sub New()
             _url = ""
             _name = ""
-            'Format = 0
             Format = ""
 
         End Sub
 
-        'Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As Integer)
         Public Sub New(ByVal __url As String, ByVal __name As String, ByVal __format As String)
             Url = __url
             Name = __name
             Format = __format
         End Sub
 
+        'SB-Ansel - takes the pieces and formats them into a workable URL
         Public Sub New(ByVal fName As String)
             Dim fPieces() As String = fName.Split("."c)
             If fPieces.Count < 4 Then
                 Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
-            End If
+                End If
             Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
 
             Dim _format As String = fPieces(fPieces.Count - 3)
@@ -104,6 +105,7 @@ Public Class MainForm
     Private Icn_Sound As Bitmap = My.Resources.icn_sound
 
     'SB-Ansel - 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
+    REM look into changing this so duckdl doesn't require admin priv
     Private Sub Microsoft_VC2010_Check() Handles MyBase.Load
         Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86", "Version", Nothing)
         If regKey Is Nothing Then
@@ -252,12 +254,18 @@ Public Class MainForm
             formatString = " -f " & curDL.Format & " "
             Console.WriteLine(formatString)
         End If
+
+        Console.WriteLine("--------------------")
+        Console.WriteLine(curDL.Url)
         Downloading = True
         CurDLCancel.Enabled = True
         'CurDLNameLabel.Text = "Downloading " & curDL.Name
         dldr = New Process
         dldr.StartInfo.FileName = Downloader
-        dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """ -o ""%(title)s.%(format_id)s.%(id)s.%(ext)s"""
+        'dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """ -o ""%(title)s.%(format_id)s.%(id)s.%(ext)s"""
+        dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
+        'Console.WriteLine(dldr.StartInfo.Arguments)
+        'Debugger.Break()
         dldr.StartInfo.UseShellExecute = False
         dldr.StartInfo.RedirectStandardOutput = True
         dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -355,11 +363,6 @@ Public Class MainForm
     End Sub
     'SB-Ansel - Populate main window with icons in relation to file type.
     Sub GetDownloadedVideos()
-        'Dim shinfo As SHFILEINFO
-        'shinfo = New SHFILEINFO()
-        'shinfo.szDisplayName = New String(Chr(0), 260)
-        'shinfo.szTypeName = New String(Chr(0), 80)
-        'Dim hImgLarge As IntPtr
         Dim vids As IEnumerable(Of String) = IO.Directory.EnumerateFiles(LibraryLocation)
         Dim idx As Integer = 0
         Dim url As String
@@ -454,8 +457,6 @@ Public Class MainForm
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
 
-            'Console.WriteLine(String.Join(Environment.NewLine, fname))
-
             If fpieces.Count > 3 Then
                 If IsNumeric(fpieces(fpieces.Count - 3)) Then
                     Try
@@ -474,16 +475,28 @@ Public Class MainForm
         End If
         Return
 cannot:
-        MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
+        MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Whoopsie!")
     End Sub
 
     REM SB-Ansel - This sections is supposed to open the selected video in the system associated web browser.
     Sub OpenInWebBrowser() ' New feature.
-        'If VideoList.SelectedItems.Count > 0 Then
-        Dim fname As String = VideoList.SelectedItems(0).Text
-        Dim fpieces() As String = fname.Split("."c)
-        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-        Process.Start(dl.Url)
+        Try
+            Dim fname As String = VideoList.SelectedItems(0).Text
+            Dim fpieces() As String = fname.Split("."c)
+
+            For Each piece As String In fpieces
+                Console.WriteLine(piece)
+            Next
+            Console.WriteLine(fpieces(2))
+            Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+            'Dim dl As New VideoDownload()
+            Process.Start(dl.Url)
+            Console.WriteLine(dl.Url)
+        Catch ex As Exception
+            GoTo cannot
+        End Try
+cannot:
+        MsgBox("Whoops! Unable to open video in browser", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Whoopsie!")
     End Sub
 
 
@@ -523,15 +536,26 @@ NextLine:
 
     'SB-Ansel - Format Dialog box, select format to which to download the video in.
     Public Shared Function PromptForFormat(ByVal url As String) As String
-        'Public Shared Function PromptForFormat(ByVal url As String) As Integer
+        DomainName(url) ' Activate DomainName
+        Console.WriteLine("PromptForFormat Activated!")
         Dim dlg As New FormatDialog(url)
+        Console.WriteLine(String.Join(Environment.NewLine, dlg))
         If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
-            'Console.WriteLine("PromptForFormat Activated!")
-            'Console.WriteLine(dlg.SelectedFormat)
+            Console.WriteLine(dlg.SelectedFormat)
             Return dlg.SelectedFormat
         Else
             Return FORMAT_UNKNOWN
         End If
+    End Function
+
+    Public Shared Function DomainName(ByVal curDL As String) As String
+        Console.WriteLine("DomainName Activated!")
+        ' Santisie the URL and retrieve the domain name for use in the file name later
+        Dim sanitiseURL As String
+        sanitiseURL = Regex.Replace(curDL, "(http:\/\/|https:\/\/)(www.)?|(.com)\/.*", "")
+        Console.WriteLine(sanitiseURL)
+        'Return sanitiseURL
+        Return sanitiseURL
     End Function
 
     Private Sub LifeCheck_Tick(sender As Object, e As EventArgs) Handles LifeCheck.Tick
@@ -715,3 +739,11 @@ attempt_line:
         MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
     End Sub
 End Class
+
+REM Todo:
+'> Redownloads And OpenIn browser:
+'These two sections go hand in hand with one another as we're going to have to scrape the URL and check for domain name anyway, so we can then use the URL_FORMAT structure for either redownloading or opening in browser.
+'> Configuaration menu: 
+' Add speed limit
+' Add Grzegorz update frequency check
+'> Look into changing the admin only mode for duckdl. ATM it has to be in admin mode for registry checks to see if the user has a dependancy installed.

@@ -52,7 +52,7 @@ Partial Class MainForm
         Me.VideoIconList = New System.Windows.Forms.ImageList(Me.components)
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.Version_Label_Main_Window = New System.Windows.Forms.Label()
+        Me.OpenInBrowser = New System.Windows.Forms.Button()
         Me.Play = New System.Windows.Forms.Button()
         Me.Redownload = New System.Windows.Forms.Button()
         Me.Delete = New System.Windows.Forms.Button()
@@ -75,7 +75,6 @@ Partial Class MainForm
         Me.LifeCheck = New System.Windows.Forms.Timer(Me.components)
         Me.OpenQueueDialog = New System.Windows.Forms.OpenFileDialog()
         Me.SaveQueueDialog = New System.Windows.Forms.SaveFileDialog()
-        Me.OpenInBrowser = New System.Windows.Forms.Button()
         Me.MainMenu.SuspendLayout()
         CType(Me.MainSplitter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MainSplitter.Panel1.SuspendLayout()
@@ -335,7 +334,6 @@ Partial Class MainForm
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.OpenInBrowser)
-        Me.Panel1.Controls.Add(Me.Version_Label_Main_Window)
         Me.Panel1.Controls.Add(Me.Play)
         Me.Panel1.Controls.Add(Me.Redownload)
         Me.Panel1.Controls.Add(Me.Delete)
@@ -346,15 +344,17 @@ Partial Class MainForm
         Me.Panel1.Size = New System.Drawing.Size(106, 515)
         Me.Panel1.TabIndex = 5
         '
-        'Version_Label_Main_Window
+        'OpenInBrowser
         '
-        Me.Version_Label_Main_Window.AutoSize = True
-        Me.Version_Label_Main_Window.ForeColor = System.Drawing.SystemColors.ControlDark
-        Me.Version_Label_Main_Window.Location = New System.Drawing.Point(25, 489)
-        Me.Version_Label_Main_Window.Name = "Version_Label_Main_Window"
-        Me.Version_Label_Main_Window.Size = New System.Drawing.Size(50, 13)
-        Me.Version_Label_Main_Window.TabIndex = 5
-        Me.Version_Label_Main_Window.Text = "V 1.4.0.2"
+        Me.OpenInBrowser.Image = CType(resources.GetObject("OpenInBrowser.Image"), System.Drawing.Image)
+        Me.OpenInBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.OpenInBrowser.Location = New System.Drawing.Point(7, 120)
+        Me.OpenInBrowser.Name = "OpenInBrowser"
+        Me.OpenInBrowser.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.OpenInBrowser.Size = New System.Drawing.Size(91, 23)
+        Me.OpenInBrowser.TabIndex = 6
+        Me.OpenInBrowser.Text = "Open in"
+        Me.OpenInBrowser.UseVisualStyleBackColor = True
         '
         'Play
         '
@@ -570,15 +570,6 @@ Partial Class MainForm
         Me.SaveQueueDialog.Filter = "DuckDL Video Queue|*.ddq"
         Me.SaveQueueDialog.Title = "Save video queue"
         '
-        'OpenInBrowser
-        '
-        Me.OpenInBrowser.Location = New System.Drawing.Point(7, 120)
-        Me.OpenInBrowser.Name = "OpenInBrowser"
-        Me.OpenInBrowser.Size = New System.Drawing.Size(91, 23)
-        Me.OpenInBrowser.TabIndex = 6
-        Me.OpenInBrowser.Text = "Open in"
-        Me.OpenInBrowser.UseVisualStyleBackColor = True
-        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -658,7 +649,6 @@ Partial Class MainForm
     Friend WithEvents Label1 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents Version_Label_Main_Window As Label
     Friend WithEvents DownloadFromListToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents EnterInMultipleURLsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OpenFileOfURLsToolStripMenuItem As ToolStripMenuItem

@@ -52,7 +52,7 @@ Public Class FormatDialog
             'Console.WriteLine(fmtLine)
             If fmtLine.Length <> 0 Then
                 formatcode = Regex.Replace(fmtLine, "([\*]).*", "")
-                Console.WriteLine(fmtLine)
+                'Console.WriteLine(fmtLine)
                 fmt = New Format With {
                 .FormatCode = formatcode,
                 .Details = details}

@@ -164,6 +164,16 @@
   <metadata name="VideoIconList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>127, 17</value>
   </metadata>
+  <data name="OpenInBrowser.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        R0lGODlhDAAMAIX/AMDAwAAA/wAAgAQE/wMDgQYGgxER/wsLhTQ0/zw8nkVFoo2N/7Ky/729/5iYzPf3
+        //39//7+/wD/AACAAAL/AgGAAQOBAxGIERWKFRyOHCGQIVr/Wm+3b3W6dYHAgZnMmdDo0Pr9+vz+/P7/
+        /v/n4f/7+v/c1P8BAf8EBP8FBf8ICP84OP///8nJycHBwcDAwKampoGBgYCAgA4ODgAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEBAAAh+QQBAAAAACwAAAAADAAM
+        AAAIcgABCBQoo+DAgwVfSJgwQcDBGC4oLGQYwKFAGB02aLAQoCINgS0esBDRAMGAigJosFiZwgSEBQYE
+        MKSBouaJFSUYZKggQYLKlSpIRHCAgcJMgSFYjAChoADDCR8BcPjgIcEBAVijCrwwg0BWrQdpiD0YEAA7
+</value>
+  </data>
   <metadata name="QueueMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>243, 23</value>
   </metadata>
