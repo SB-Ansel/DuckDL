@@ -1,13 +1,15 @@
-﻿Imports System.Net
+﻿Imports System.IO
+Imports System.Net
 Imports System.Text.RegularExpressions
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+
 Public Class MainForm
     Public Const YT_URL_FORMAT As String = "http://www.youtube.com/watch?v={0}"
     Public Const Twitter_URL_FORMAT As String = "https://twitter.com/i/status/{0}"
-
-    Public Const Instagram_URL_FORMAT As String = "https://www.instagram.com/p/CFv6MmIgC9V/?{0}"
-
+    Public Const Instagram_URL_FORMAT As String = "https://www.instagram.com/p/{0}"
     Public Const Facebook_URL_FORMAT As String = "https://www.facebook.com/watch/?v={0}"
-    Public Const Reddit_URL_FORMAT As String = "https://www.reddit.com/r/{0}"
+    Public Const Reddit_URL_FORMAT As String = "https://www.reddit.com/comments/{0}"
 
     Public Const FORMAT_UNKNOWN As String = "FORMAT_UNKNOWN"
     Public Const FORMAT_BEST As String = "FORMAT_BEST"
@@ -65,22 +67,51 @@ Public Class MainForm
 
         'SB-Ansel - takes the pieces and formats them into a workable URL
         Public Sub New(ByVal fName As String)
+            Console.WriteLine("Workable URL section activated!!!")
             Dim fPieces() As String = fName.Split("."c)
-            If fPieces.Count < 4 Then
-                Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
-                End If
-            Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
+            Console.WriteLine(String.Join(Environment.NewLine, fPieces))
 
-            Dim _format As String = fPieces(fPieces.Count - 3)
-            If Not IsNumeric(_format) Then
-                Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
-            End If
-            Format = CInt(_format)
-            Name = ""
-            For i As Integer = 0 To fPieces.Count - 4
-                Name &= fPieces(i) & "."
+
+            'If fPieces.Count < 4 Then
+            '    Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
+            'End If
+
+            For Each pieces As String In fPieces
+                Console.WriteLine(pieces)
+                If pieces = "youtube" Then
+                    Url = String.Format(YT_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Console.WriteLine("Youtube Ping!")
+                End If
+                If pieces = "twitter" Then
+                    Url = String.Format(Twitter_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Console.WriteLine("Twitter Ping!")
+                End If
+                If pieces = "instagram" Then
+                    Url = String.Format(Instagram_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Console.WriteLine("Instagram Ping!")
+                End If
+                If pieces = "facebook" Then
+                    Url = String.Format(Facebook_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Console.WriteLine("Facebook Ping!")
+                End If
+                If pieces = "reddit" Then
+                    Url = String.Format(Reddit_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Console.WriteLine("Reddit Ping!")
+                End If
             Next
-            If Name.Length > 1 Then Name = Name.Remove(Name.Length - 1)
+            'Dim _format As String = fPieces(fPieces.Count - 3)
+
+            'If Not IsNumeric(_format) Then
+            '    Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
+            'End If
+
+            'Format = CInt(_format)
+            'Name = ""
+
+            'For i As Integer = 0 To fPieces.Count - 4
+            '    Name &= fPieces(i) & "."
+            'Next
+            'If Name.Length > 1 Then Name = Name.Remove(Name.Length - 1)
         End Sub
 
         Public Shared Function FromString(ByVal s As String) As VideoDownload
@@ -254,27 +285,45 @@ Public Class MainForm
             formatString = " -f " & curDL.Format & " "
             Console.WriteLine(formatString)
         End If
-
-        Console.WriteLine("--------------------")
+        Console.WriteLine("############################")
         Console.WriteLine(curDL.Url)
-        Downloading = True
-        CurDLCancel.Enabled = True
-        'CurDLNameLabel.Text = "Downloading " & curDL.Name
-        dldr = New Process
-        dldr.StartInfo.FileName = Downloader
-        'dldr.StartInfo.Arguments = formatString & "-c """ & curDL.Url & """ -o ""%(title)s.%(format_id)s.%(id)s.%(ext)s"""
-        dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
-        'Console.WriteLine(dldr.StartInfo.Arguments)
-        'Debugger.Break()
-        dldr.StartInfo.UseShellExecute = False
-        dldr.StartInfo.RedirectStandardOutput = True
-        dldr.StartInfo.WorkingDirectory = LibraryLocation
-        dldr.StartInfo.CreateNoWindow = True
-        AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
-        'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
-        dldr.Start()
-        dldr.BeginOutputReadLine()
-        LifeCheck.Enabled = True
+        If DomainName(curDL.Url) = "reddit" Then
+            Downloading = True
+            CurDLCancel.Enabled = True
+            dldr = New Process
+            dldr.StartInfo.FileName = Downloader
+            'Debugger.Break()
+            dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.{RedditURL(curDL.Url)}.%(ext)s"
+            'Console.WriteLine(dldr.StartInfo.Arguments)
+            'Debugger.Break()
+            dldr.StartInfo.UseShellExecute = False
+            dldr.StartInfo.RedirectStandardOutput = True
+            dldr.StartInfo.WorkingDirectory = LibraryLocation
+            dldr.StartInfo.CreateNoWindow = True
+            AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
+            'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
+            dldr.Start()
+            dldr.BeginOutputReadLine()
+            LifeCheck.Enabled = True
+        Else
+            Downloading = True
+            CurDLCancel.Enabled = True
+            dldr = New Process
+            dldr.StartInfo.FileName = Downloader
+            dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
+            'Console.WriteLine(dldr.StartInfo.Arguments)
+            'Debugger.Break()
+            dldr.StartInfo.UseShellExecute = False
+            dldr.StartInfo.RedirectStandardOutput = True
+            dldr.StartInfo.WorkingDirectory = LibraryLocation
+            dldr.StartInfo.CreateNoWindow = True
+            AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
+            'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
+            dldr.Start()
+            dldr.BeginOutputReadLine()
+            LifeCheck.Enabled = True
+        End If
+
     End Sub
     Dim DownloadLog As String = ""
     Private Sub DLProgressUpdate(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
@@ -299,7 +348,6 @@ Public Class MainForm
     ' SB-Ansel - Check to see if the suppiled URL is a real URL.
     Private Function UrlIsValid(ByVal url As String) As Boolean
         If url.ToLower().StartsWith("www.") Then url = "http://" & url
-        'Console.WriteLine(url)
         Dim web_response As HttpWebResponse = Nothing
         Try
             Dim web_request As HttpWebRequest = WebRequest.Create(url)
@@ -456,49 +504,41 @@ Public Class MainForm
         If VideoList.SelectedItems.Count > 0 Then
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
-
-            If fpieces.Count > 3 Then
-                If IsNumeric(fpieces(fpieces.Count - 3)) Then
-                    Try
-                        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-                        dl.Format = PromptForFormat(dl.Url)
-                        If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
-                    Catch ex As Exception
-                        GoTo cannot
-                    End Try
-                Else
-                    GoTo cannot
-                End If
-            Else
+            Try
+                Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+                dl.Format = PromptForFormat(dl.Url)
+                If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+            Catch ex As Exception
                 GoTo cannot
-            End If
+            End Try
+        Else
+            GoTo cannot
         End If
         Return
 cannot:
         MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Whoopsie!")
     End Sub
 
-    REM SB-Ansel - This sections is supposed to open the selected video in the system associated web browser.
+    'Sub RedownloadSelectedVideo()
+    '    Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+    '    Dim fname As String = VideoList.SelectedItems(0).Text
+    '    Dim fpieces() As String = fname.Split("."c)
+    '    Console.WriteLine(String.Join(Environment.NewLine, fpieces))
+    '    Console.WriteLine(dl.Url)
+    '    dl.Format = PromptForFormat(dl.Url)
+    '    Console.WriteLine("JAKEJAKEJAKEJAKEJAKE!!!!!")
+    '    Console.WriteLine(dl.Format)
+    '    If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+    'End Sub
+
+    'SB-Ansel - Open selected item in browser!
     Sub OpenInWebBrowser() ' New feature.
-        Try
-            Dim fname As String = VideoList.SelectedItems(0).Text
-            Dim fpieces() As String = fname.Split("."c)
-
-            For Each piece As String In fpieces
-                Console.WriteLine(piece)
-            Next
-            Console.WriteLine(fpieces(2))
-            Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-            'Dim dl As New VideoDownload()
-            Process.Start(dl.Url)
-            Console.WriteLine(dl.Url)
-        Catch ex As Exception
-            GoTo cannot
-        End Try
-cannot:
-        MsgBox("Whoops! Unable to open video in browser", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Whoopsie!")
+        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+        Dim fname As String = VideoList.SelectedItems(0).Text
+        Dim fpieces() As String = fname.Split("."c)
+        Process.Start(dl.Url)
+        'Console.WriteLine(dl.Url)
     End Sub
-
 
     Enum ContinueOrCancel
         Unknown = 0
@@ -537,6 +577,28 @@ NextLine:
     'SB-Ansel - Format Dialog box, select format to which to download the video in.
     Public Shared Function PromptForFormat(ByVal url As String) As String
         DomainName(url) ' Activate DomainName
+        If DomainName(url) = "reddit" Then
+            Dim web_request As HttpWebRequest = WebRequest.Create(url + "/file.json")
+            Dim web_response As WebResponse = web_request.GetResponse()
+            web_request.ContentType = "application/json; charset=utf-8"
+            web_request.MaximumAutomaticRedirections = 2
+            web_request.UserAgent = "Nothing"
+            web_request.AllowAutoRedirect = True
+
+            Dim s = web_request.GetResponse().GetResponseStream()
+            Dim sr = New StreamReader(s)
+            Dim contributorsAsJson = sr.ReadToEnd()
+            Dim contributors = JsonConvert.DeserializeObject(contributorsAsJson).ToString
+            Dim parse = JArray.Parse(contributors)
+
+            Dim urlPART = parse.SelectToken("$.[0].data.children[0].data.permalink").ToString
+            Console.WriteLine("https://www.reddit.com" + urlPART)
+            'Console.WriteLine(parse.SelectToken("$.[0].data.children[0].data.permalink"))
+            web_response.Dispose()
+            web_response.Close()
+            url = "https://www.reddit.com" + urlPART
+        End If
+
         Console.WriteLine("PromptForFormat Activated!")
         Dim dlg As New FormatDialog(url)
         Console.WriteLine(String.Join(Environment.NewLine, dlg))
@@ -556,6 +618,15 @@ NextLine:
         Console.WriteLine(sanitiseURL)
         'Return sanitiseURL
         Return sanitiseURL
+    End Function
+
+    'SB-Ansel - Cause Reddit is special <3!
+    Public Shared Function RedditURL(ByVal curDL As String) As String
+        Console.WriteLine("RedditID Activated!")
+        Dim redditID As String
+        redditID = Regex.Replace(curDL, ".*(\/comments\/=?)|(\/=?.*)", "")
+        Console.WriteLine(redditID)
+        Return redditID
     End Function
 
     Private Sub LifeCheck_Tick(sender As Object, e As EventArgs) Handles LifeCheck.Tick
@@ -739,11 +810,3 @@ attempt_line:
         MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
     End Sub
 End Class
-
-REM Todo:
-'> Redownloads And OpenIn browser:
-'These two sections go hand in hand with one another as we're going to have to scrape the URL and check for domain name anyway, so we can then use the URL_FORMAT structure for either redownloading or opening in browser.
-'> Configuaration menu: 
-' Add speed limit
-' Add Grzegorz update frequency check
-'> Look into changing the admin only mode for duckdl. ATM it has to be in admin mode for registry checks to see if the user has a dependancy installed.
