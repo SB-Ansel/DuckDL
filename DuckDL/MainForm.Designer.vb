@@ -240,6 +240,7 @@ Partial Class MainForm
         Me.MainSplitter.Dock = System.Windows.Forms.DockStyle.Fill
         Me.MainSplitter.IsSplitterFixed = True
         Me.MainSplitter.Location = New System.Drawing.Point(0, 24)
+        Me.MainSplitter.Margin = New System.Windows.Forms.Padding(0)
         Me.MainSplitter.Name = "MainSplitter"
         Me.MainSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -257,7 +258,7 @@ Partial Class MainForm
         Me.MainSplitter.Panel2.Controls.Add(Me.DownloadingLayout)
         Me.MainSplitter.Panel2MinSize = 100
         Me.MainSplitter.Size = New System.Drawing.Size(683, 661)
-        Me.MainSplitter.SplitterDistance = 546
+        Me.MainSplitter.SplitterDistance = 557
         Me.MainSplitter.TabIndex = 1
         '
         'TableLayoutPanel2
@@ -265,19 +266,20 @@ Partial Class MainForm
         Me.TableLayoutPanel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
         Me.TableLayoutPanel2.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.TableLayoutPanel2.ColumnCount = 2
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.57771!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.42229!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 113.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 1, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.VideoList, 0, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.Label2, 0, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.Panel1, 1, 1)
-        Me.TableLayoutPanel2.Location = New System.Drawing.Point(-1, -1)
+        Me.TableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel2.Location = New System.Drawing.Point(0, 0)
+        Me.TableLayoutPanel2.MinimumSize = New System.Drawing.Size(683, 545)
         Me.TableLayoutPanel2.Name = "TableLayoutPanel2"
         Me.TableLayoutPanel2.RowCount = 2
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(683, 545)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(683, 555)
         Me.TableLayoutPanel2.TabIndex = 6
         '
         'Label1
@@ -287,24 +289,27 @@ Partial Class MainForm
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.Label1.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_sound
         Me.Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.Label1.Location = New System.Drawing.Point(573, 1)
+        Me.Label1.Location = New System.Drawing.Point(572, 1)
         Me.Label1.Name = "Label1"
         Me.Label1.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(106, 21)
+        Me.Label1.Size = New System.Drawing.Size(107, 21)
         Me.Label1.TabIndex = 3
         Me.Label1.Text = "Video Actions"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'VideoList
         '
+        Me.VideoList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.VideoList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.VideoList.HideSelection = False
         Me.VideoList.LabelWrap = False
         Me.VideoList.LargeImageList = Me.VideoIconList
         Me.VideoList.Location = New System.Drawing.Point(4, 26)
         Me.VideoList.Name = "VideoList"
-        Me.VideoList.Size = New System.Drawing.Size(562, 515)
+        Me.VideoList.Size = New System.Drawing.Size(561, 525)
         Me.VideoList.SmallImageList = Me.VideoIconList
         Me.VideoList.TabIndex = 1
         Me.VideoList.UseCompatibleStateImageBehavior = False
@@ -318,28 +323,33 @@ Partial Class MainForm
         '
         'Label2
         '
+        Me.Label2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label2.AutoSize = True
-        Me.Label2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label2.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.Label2.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_film
         Me.Label2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.Label2.Location = New System.Drawing.Point(4, 1)
         Me.Label2.Name = "Label2"
         Me.Label2.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.Label2.Size = New System.Drawing.Size(562, 21)
+        Me.Label2.Size = New System.Drawing.Size(561, 16)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Video List"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'Panel1
         '
+        Me.Panel1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel1.Controls.Add(Me.OpenInBrowser)
         Me.Panel1.Controls.Add(Me.Play)
         Me.Panel1.Controls.Add(Me.Redownload)
         Me.Panel1.Controls.Add(Me.Delete)
         Me.Panel1.Controls.Add(Me.Show_in_folder)
-        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel1.Location = New System.Drawing.Point(573, 26)
+        Me.Panel1.Location = New System.Drawing.Point(572, 26)
+        Me.Panel1.MaximumSize = New System.Drawing.Size(106, 515)
+        Me.Panel1.MinimumSize = New System.Drawing.Size(106, 515)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(106, 515)
         Me.Panel1.TabIndex = 5
@@ -351,7 +361,7 @@ Partial Class MainForm
         Me.OpenInBrowser.Location = New System.Drawing.Point(7, 120)
         Me.OpenInBrowser.Name = "OpenInBrowser"
         Me.OpenInBrowser.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.OpenInBrowser.Size = New System.Drawing.Size(91, 23)
+        Me.OpenInBrowser.Size = New System.Drawing.Size(93, 23)
         Me.OpenInBrowser.TabIndex = 6
         Me.OpenInBrowser.Text = "Open in"
         Me.OpenInBrowser.UseVisualStyleBackColor = True
@@ -402,22 +412,25 @@ Partial Class MainForm
         '
         'DownloadingLayout
         '
+        Me.DownloadingLayout.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DownloadingLayout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
         Me.DownloadingLayout.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.DownloadingLayout.ColumnCount = 2
-        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 402.0!))
         Me.DownloadingLayout.Controls.Add(Me.CurDLLabel, 1, 0)
         Me.DownloadingLayout.Controls.Add(Me.QueueLabel, 0, 0)
         Me.DownloadingLayout.Controls.Add(Me.QueueBox, 0, 1)
         Me.DownloadingLayout.Controls.Add(Me.CurDLPanel, 1, 1)
         Me.DownloadingLayout.Location = New System.Drawing.Point(-1, 0)
+        Me.DownloadingLayout.Margin = New System.Windows.Forms.Padding(0)
         Me.DownloadingLayout.Name = "DownloadingLayout"
-        Me.DownloadingLayout.RowCount = 3
+        Me.DownloadingLayout.RowCount = 2
         Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21.0!))
         Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.DownloadingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.DownloadingLayout.Size = New System.Drawing.Size(683, 131)
+        Me.DownloadingLayout.Size = New System.Drawing.Size(683, 99)
         Me.DownloadingLayout.TabIndex = 0
         '
         'CurDLLabel
@@ -427,11 +440,11 @@ Partial Class MainForm
         Me.CurDLLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.CurDLLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_computer_link
         Me.CurDLLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.CurDLLabel.Location = New System.Drawing.Point(345, 1)
+        Me.CurDLLabel.Location = New System.Drawing.Point(283, 1)
         Me.CurDLLabel.Name = "CurDLLabel"
         Me.CurDLLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
         Me.CurDLLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.CurDLLabel.Size = New System.Drawing.Size(334, 21)
+        Me.CurDLLabel.Size = New System.Drawing.Size(396, 21)
         Me.CurDLLabel.TabIndex = 3
         Me.CurDLLabel.Text = "Current Download"
         '
@@ -445,21 +458,24 @@ Partial Class MainForm
         Me.QueueLabel.Location = New System.Drawing.Point(4, 1)
         Me.QueueLabel.Name = "QueueLabel"
         Me.QueueLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.QueueLabel.Size = New System.Drawing.Size(334, 21)
+        Me.QueueLabel.Size = New System.Drawing.Size(272, 21)
         Me.QueueLabel.TabIndex = 1
         Me.QueueLabel.Text = "Downloading Queue"
         '
         'QueueBox
         '
+        Me.QueueBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.QueueBox.BackColor = System.Drawing.SystemColors.Window
         Me.QueueBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.QueueBox.ContextMenuStrip = Me.QueueMenu
-        Me.QueueBox.Dock = System.Windows.Forms.DockStyle.Fill
         Me.QueueBox.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.QueueBox.FormattingEnabled = True
         Me.QueueBox.Items.AddRange(New Object() {"Video 1", "Video 2", "Another Video", "More Videos"})
         Me.QueueBox.Location = New System.Drawing.Point(4, 26)
         Me.QueueBox.Name = "QueueBox"
-        Me.QueueBox.Size = New System.Drawing.Size(334, 80)
+        Me.QueueBox.Size = New System.Drawing.Size(272, 67)
         Me.QueueBox.TabIndex = 4
         '
         'QueueMenu
@@ -502,9 +518,9 @@ Partial Class MainForm
         Me.CurDLPanel.Controls.Add(Me.CurDLProgress)
         Me.CurDLPanel.Controls.Add(Me.CurDLCancel)
         Me.CurDLPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.CurDLPanel.Location = New System.Drawing.Point(345, 26)
+        Me.CurDLPanel.Location = New System.Drawing.Point(283, 26)
         Me.CurDLPanel.Name = "CurDLPanel"
-        Me.CurDLPanel.Size = New System.Drawing.Size(334, 80)
+        Me.CurDLPanel.Size = New System.Drawing.Size(396, 69)
         Me.CurDLPanel.TabIndex = 5
         '
         'DLQueuedVidsBtn
@@ -527,7 +543,7 @@ Partial Class MainForm
         Me.CurDLProgress.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CurDLProgress.Location = New System.Drawing.Point(2, 0)
         Me.CurDLProgress.Name = "CurDLProgress"
-        Me.CurDLProgress.Size = New System.Drawing.Size(329, 36)
+        Me.CurDLProgress.Size = New System.Drawing.Size(394, 36)
         Me.CurDLProgress.TabIndex = 4
         Me.CurDLProgress.Text = "No video downloading (-_-')"
         Me.CurDLProgress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -537,7 +553,7 @@ Partial Class MainForm
         Me.CurDLCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.CurDLCancel.Font = New System.Drawing.Font("Arial", 9.0!)
         Me.CurDLCancel.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.CurDLCancel.Location = New System.Drawing.Point(256, 39)
+        Me.CurDLCancel.Location = New System.Drawing.Point(321, 39)
         Me.CurDLCancel.Name = "CurDLCancel"
         Me.CurDLCancel.Size = New System.Drawing.Size(75, 23)
         Me.CurDLCancel.TabIndex = 3
@@ -579,11 +595,9 @@ Partial Class MainForm
         Me.Controls.Add(Me.MainSplitter)
         Me.Controls.Add(Me.MainMenu)
         Me.Font = New System.Drawing.Font("Segoe UI", 8.25!)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MainMenu
-        Me.MaximizeBox = False
-        Me.MinimumSize = New System.Drawing.Size(550, 500)
+        Me.MinimumSize = New System.Drawing.Size(699, 724)
         Me.Name = "MainForm"
         Me.Text = "DuckDL"
         Me.MainMenu.ResumeLayout(False)

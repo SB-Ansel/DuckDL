@@ -161,6 +161,9 @@
         tAAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="QueueMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>243, 23</value>
+  </metadata>
   <metadata name="VideoIconList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>127, 17</value>
   </metadata>
@@ -174,9 +177,6 @@
         MKSBouaJFSUYZKggQYLKlSpIRHCAgcJMgSFYjAChoADDCR8BcPjgIcEBAVijCrwwg0BWrQdpiD0YEAA7
 </value>
   </data>
-  <metadata name="QueueMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>243, 23</value>
-  </metadata>
   <metadata name="AddFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>362, 23</value>
   </metadata>
