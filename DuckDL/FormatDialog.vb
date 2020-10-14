@@ -3,16 +3,13 @@
 Public Class FormatDialog
     Public Shared Custom_Command As String
     Structure Format
-        'Dim Id As Integer
         Dim FormatCode As String
         Dim Filetype As String
         Dim Size As String
         Dim Details As String
     End Structure
 
-    Private Formats As New List(Of Format)
-
-    'Public ReadOnly Property SelectedFormat() As Integer
+    Private ReadOnly Formats As New List(Of Format)
     Public ReadOnly Property SelectedFormat() As String
         Get
             If BestAudio_CheckBox.Checked = True Then
@@ -26,18 +23,18 @@ Public Class FormatDialog
                 If FormatList.SelectedItems.Count = 0 Then
                     Return MainForm.FORMAT_UNKNOWN
                 Else
-                    'Console.WriteLine(Formats(FormatList.SelectedIndex).Id)
                     Return Formats(FormatList.SelectedIndex).FormatCode
                 End If
             End If
         End Get
     End Property
     Sub New(ByVal url As String)
+        Console.WriteLine("DuckDl-FormatDialog: > Available Formats!")
         ' This call is required by the designer.
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-
+        Console.WriteLine(url)
         Dim fmtOutput As String = MainForm.GetVideoInfo("--list-formats", url, "Finding available formats...")
         Dim fmtLines As String() = fmtOutput.Split(vbNewLine)
         Dim formatcode As String
@@ -49,10 +46,8 @@ Public Class FormatDialog
             fmtLine = fmtLine.TrimStart
             details = fmtLine
             fmtLine = Regex.Replace(fmtLine, "([.?\s])+", "*") ' YACK! remove those spaces so we can insert our own delimiter {*}
-            'Console.WriteLine(fmtLine)
             If fmtLine.Length <> 0 Then
                 formatcode = Regex.Replace(fmtLine, "([\*]).*", "")
-                'Console.WriteLine(fmtLine)
                 fmt = New Format With {
                 .FormatCode = formatcode,
                 .Details = details}

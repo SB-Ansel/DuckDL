@@ -20,10 +20,10 @@ Public Class MainForm
     Public Shared ReadOnly QueueLocation As String = LibraryLocation & "\_q.ddq"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
 
-    Dim VideoQueue As New Queue(Of VideoDownload)
+    ReadOnly VideoQueue As New Queue(Of VideoDownload)
     Dim Downloading As Boolean = False
     Dim DLingQueued As Boolean = False
-    Dim IsProcessRunning As Boolean = False
+    ReadOnly IsProcessRunning As Boolean = False
 
     Class VideoDownload
         Private _url As String
@@ -67,11 +67,11 @@ Public Class MainForm
 
         'SB-Ansel - takes the pieces and formats them into a workable URL
         Public Sub New(ByVal fName As String)
-            Console.WriteLine("Workable URL section activated!!!")
+            Console.WriteLine("DuckDl: > Workable URL section activated!!!")
             Dim fPieces() As String = fName.Split("."c)
-            'If fPieces.Count < 4 Then
-            '    Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
-            'End If
+            If fPieces.Count < 4 Then
+                Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
+            End If
             For Each pieces As String In fPieces
                 Console.WriteLine(pieces)
                 If pieces = "youtube" Then
@@ -90,20 +90,23 @@ Public Class MainForm
                     Url = String.Format(Facebook_URL_FORMAT, fPieces(fPieces.Count - 2))
                     Console.WriteLine("Facebook Ping!")
                 End If
-                REM Null value might be because there is no name
                 If pieces = "reddit" Then
                     Dim shortUrl As String
                     shortUrl = String.Format(Reddit_URL_FORMAT, fPieces(fPieces.Count - 2))
-                    redditWebRequest(shortUrl)
                     Console.WriteLine("Reddit Ping!")
-                    Console.WriteLine(redditWebRequest(shortUrl))
-                    Url = redditWebRequest(shortUrl)
+                    Url = RedditWebRequest(shortUrl)
                 End If
+                Dim _format As String = fPieces(fPieces.Count - 1)
+                If _format = "" Then
+                    Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
+                End If
+                Format = _format
+                Name = "$Tmp_FileName"
             Next
         End Sub
 
         Public Shared Function FromString(ByVal s As String) As VideoDownload
-            Console.WriteLine("FromString")
+            Console.WriteLine("DuckDl: > FromString")
             Dim sPcs() As String = s.Split(";"c)
             Console.WriteLine(sPcs)
             Dim vd As New VideoDownload
@@ -117,10 +120,10 @@ Public Class MainForm
         End Function
     End Class
 
-    Private Icn_Download As Bitmap = My.Resources.icn_arrow_down
-    Private Icn_Delete As Bitmap = My.Resources.icn_x
-    Private Icn_Film As Bitmap = My.Resources.icn_film
-    Private Icn_Sound As Bitmap = My.Resources.icn_sound
+    Private ReadOnly Icn_Download As Bitmap = My.Resources.icn_arrow_down
+    Private ReadOnly Icn_Delete As Bitmap = My.Resources.icn_x
+    Private ReadOnly Icn_Film As Bitmap = My.Resources.icn_film
+    Private ReadOnly Icn_Sound As Bitmap = My.Resources.icn_sound
 
     'SB-Ansel - 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
     REM look into changing this so duckdl doesn't require admin priv
@@ -142,13 +145,13 @@ Public Class MainForm
     End Sub
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' If there is a FILE (not a dir) which occupies the library location, delete it
-        If IO.File.Exists(LibraryLocation) Then IO.File.Delete(LibraryLocation)
+        If File.Exists(LibraryLocation) Then File.Delete(LibraryLocation)
         ' Create library dir
-        If Not IO.Directory.Exists(LibraryLocation) Then IO.Directory.CreateDirectory(LibraryLocation)
+        If Not Directory.Exists(LibraryLocation) Then Directory.CreateDirectory(LibraryLocation)
         Text = My.Application.Info.ProductName
         QueueBox.Items.Clear()
         ' Load queue from last session
-        If IO.File.Exists(QueueLocation) Then
+        If File.Exists(QueueLocation) Then
             LoadQueue(QueueLocation)
         End If
         CurDLCancel.Enabled = False
@@ -160,7 +163,6 @@ Public Class MainForm
     End Sub
 
     Function GetVideoName(url As String) As String
-        'Return GetVideoInfo("--get-title", url, "Getting name of " & url.Split("=").Last)
         Return GetVideoInfo("--get-title", url)
     End Function
 
@@ -174,7 +176,7 @@ Public Class MainForm
             .Start()
         End With
         Dim imgUrl As String
-        Using oStreamReader As IO.StreamReader = p.StandardOutput
+        Using oStreamReader As StreamReader = p.StandardOutput
             imgUrl = oStreamReader.ReadToEnd()
         End Using
         Dim tmp As String = My.Computer.FileSystem.GetTempFileName
@@ -183,11 +185,11 @@ Public Class MainForm
     End Function
 
     Sub AddVideoToQueue(v2d As VideoDownload)
-        Console.WriteLine("AddVideoToQueue")
+        Console.WriteLine("DuckDl: > AddVideoToQueue")
+        Console.WriteLine(String.Join(Environment.NewLine, v2d))
         VideoQueue.Enqueue(v2d)
-        Console.WriteLine(v2d)
+        Console.WriteLine(String.Join(Environment.NewLine, v2d.Name))
         QueueBox.Items.Add(v2d.Name)
-        Console.WriteLine(v2d.Name)
         QueueBox.Update()
         UpdateDLButton()
     End Sub
@@ -282,10 +284,7 @@ Public Class MainForm
             CurDLCancel.Enabled = True
             dldr = New Process
             dldr.StartInfo.FileName = Downloader
-            'Debugger.Break()
             dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.{RedditURL(curDL.Url)}.%(ext)s"
-            'Console.WriteLine(dldr.StartInfo.Arguments)
-            'Debugger.Break()
             dldr.StartInfo.UseShellExecute = False
             dldr.StartInfo.RedirectStandardOutput = True
             dldr.StartInfo.WorkingDirectory = LibraryLocation
@@ -363,26 +362,12 @@ Public Class MainForm
         GetDownloadedVideos()
         DownloadNext()
     End Sub
-    'SB-Ansel - Helped me solve the unhandled exception when CurDLCancel is called by the user pressing the cancel button.
-    'Dim p() As Process
-    'Private Sub CheckForRunningProcess()
-    '    p = Process.GetProcessesByName("dldr")
-    '    If p.Count > 0 Then
-    '        ' Process is running
-    '        Console.WriteLine("DlDR still running!")
-    '    Else
-    '        ' Process is not running
-    '        Console.WriteLine("DlDR not running!")
-    '    End If
-    'End Sub
     Private Sub CurDLCancel_Click(sender As Object, e As EventArgs) Handles CurDLCancel.Click
         dldr.Kill()
-        'CheckForRunningProcess()
-        'DownloadDone() SB-Ansel - This isn't supposed to be here, this causes an unhandled exception in DuckDL version qc_fix.
         CleanPartFiles()
     End Sub
     Sub CleanPartFiles()
-        For Each file As String In IO.Directory.EnumerateFiles(LibraryLocation)
+        For Each file As String In Directory.EnumerateFiles(LibraryLocation)
             If file.ToUpper.EndsWith("PART") Then
                 IO.File.Delete(file)
             End If
@@ -402,7 +387,7 @@ Public Class MainForm
     End Sub
     'SB-Ansel - Populate main window with icons in relation to file type.
     Sub GetDownloadedVideos()
-        Dim vids As IEnumerable(Of String) = IO.Directory.EnumerateFiles(LibraryLocation)
+        Dim vids As IEnumerable(Of String) = Directory.EnumerateFiles(LibraryLocation)
         Dim idx As Integer = 0
         Console.WriteLine("idx")
         Console.WriteLine(idx)
@@ -450,7 +435,7 @@ Public Class MainForm
         InfOut = New Text.StringBuilder()
         Dim NewProcess As New Process()
         'SB-Ansel - Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
-        Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
+        Dim WaitDlg As New Controls.WaitDialog(progressTxt, True)
         WaitDlg.Show()
         With NewProcess.StartInfo
             .FileName = Downloader
@@ -462,8 +447,6 @@ Public Class MainForm
             .WindowStyle = ProcessWindowStyle.Normal
             .CreateNoWindow = True
         End With
-        'Console.WriteLine("GetVideoInfo Activated!")
-        'Console.WriteLine(NewProcess.StartInfo.Arguments)
         ' Set our event handler to asynchronously read the sort output.
         AddHandler NewProcess.OutputDataReceived, AddressOf GetVideoInfo_OutputHandler
         Cursor = Cursors.WaitCursor
@@ -486,31 +469,32 @@ Public Class MainForm
 
     Sub DeleteSelectedVideos()
         Do Until VideoList.SelectedItems.Count = 0
-            IO.File.Delete(LibraryLocation & "\" & VideoList.SelectedItems(0).Text)
+            File.Delete(LibraryLocation & "\" & VideoList.SelectedItems(0).Text)
             VideoList.SelectedItems(0).Remove()
         Loop
     End Sub
 
     REM SB-Ansel - This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
     ' this section is supposed to take the filename, split it up to retrieve the video ID.
-    Public Shared Function redditWebRequest(ByVal url As String) As String
-        Console.WriteLine("Reddit Web Request")
-        DomainName(url) ' Activate DomainName
+    Public Shared Function RedditWebRequest(ByVal url As String) As String
+        Console.WriteLine("DuckDl: > Reddit Web Request")
+        'DomainName(url) ' Activate DomainName
         If DomainName(url) = "reddit" Then
             Dim web_request As HttpWebRequest = WebRequest.Create(url + "/file.json")
             Dim web_response As WebResponse = web_request.GetResponse()
+
             web_request.ContentType = "application/json; charset=utf-8"
             web_request.MaximumAutomaticRedirections = 2
             web_request.UserAgent = "Nothing"
             web_request.AllowAutoRedirect = True
+
             Dim s = web_request.GetResponse().GetResponseStream()
             Dim sr = New StreamReader(s)
             Dim contributorsAsJson = sr.ReadToEnd()
             Dim contributors = JsonConvert.DeserializeObject(contributorsAsJson).ToString
             Dim parse = JArray.Parse(contributors)
             Dim urlPART = parse.SelectToken("$.[0].data.children[0].data.permalink").ToString
-            Console.WriteLine("https://www.reddit.com" + urlPART)
-            'Console.WriteLine(parse.SelectToken("$.[0].data.children[0].data.permalink"))
+
             web_response.Dispose()
             web_response.Close()
 
@@ -518,17 +502,15 @@ Public Class MainForm
             Return actualURL
         End If
     End Function
-
-    Sub RedownloadSelectedVideo()
+    Public Sub RedownloadSelectedVideo()
+        Console.WriteLine("DuckDl: > RedownloadSelectedVideo")
         If VideoList.SelectedItems.Count > 0 Then
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
-
             If fpieces.Count > 3 Then
                 Try
                     Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
                     dl.Format = PromptForFormat(dl.Url)
-                    Console.WriteLine(dl.Format)
                     If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
                 Catch ex As Exception
                     MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
@@ -543,7 +525,6 @@ Public Class MainForm
         Dim fname As String = VideoList.SelectedItems(0).Text
         Dim fpieces() As String = fname.Split("."c)
         Process.Start(dl.Url)
-        'Console.WriteLine(dl.Url)
     End Sub
 
     Enum ContinueOrCancel
@@ -579,11 +560,9 @@ ShowDlg:
 NextLine:
         Next
     End Sub
-
     'SB-Ansel - Format Dialog box, select format to which to download the video in.
     Public Shared Function PromptForFormat(ByVal url As String) As String
-
-        Console.WriteLine("PromptForFormat Activated!")
+        Console.WriteLine("DuckDl: > PromptForFormat Activated!")
         Dim dlg As New FormatDialog(url)
         If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
             Console.WriteLine(dlg.SelectedFormat)
@@ -592,26 +571,21 @@ NextLine:
             Return FORMAT_UNKNOWN
         End If
     End Function
-
     Public Shared Function DomainName(ByVal curDL As String) As String
-        Console.WriteLine("DomainName Activated!")
+        Console.WriteLine("DuckDl: > DomainName Activated!")
         ' Santisie the URL and retrieve the domain name for use in the file name later
         Dim sanitiseURL As String
         sanitiseURL = Regex.Replace(curDL, "(http:\/\/|https:\/\/)(www.)?|(.com)\/.*", "")
-        Console.WriteLine(sanitiseURL)
-        'Return sanitiseURL
         Return sanitiseURL
     End Function
-
     'SB-Ansel - Cause Reddit is special <3!
     Public Shared Function RedditURL(ByVal curDL As String) As String
-        Console.WriteLine("RedditID Activated!")
+        Console.WriteLine("DuckDl: > RedditID Activated!")
         Dim redditID As String
         redditID = Regex.Replace(curDL, ".*(\/comments\/=?)|(\/=?.*)", "")
         Console.WriteLine(redditID)
         Return redditID
     End Function
-
     Private Sub LifeCheck_Tick(sender As Object, e As EventArgs) Handles LifeCheck.Tick
         If dldr.HasExited Then
             LifeCheck.Enabled = False
@@ -619,22 +593,15 @@ NextLine:
             DownloadDone()
         End If
     End Sub
-
     ' SB-Ansel - Play video using system assocations.
     Sub PlayVideo(ByVal path As String)
         Process.Start(path)
     End Sub
-
-    ' SB-Ansel - this works though..., appears to be unused.
-    'Private Sub DownloadChannelToolStripMenuItem_Click(sender As Object, e As EventArgs)
-    '    MsgBox("Sorry, this is no longer supported by YouTube.", MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation)
-    'End Sub
     Private Sub ClearAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClearAllToolStripMenuItem.Click
         VideoQueue.Clear()
         QueueBox.Items.Clear()
         QueueBox.Update()
     End Sub
-
     Sub SaveQueue(ByVal savepath As String)
         Dim f As StreamWriter = My.Computer.FileSystem.OpenTextFileWriter(savepath, False)
         For Each dl As VideoDownload In VideoQueue
@@ -644,7 +611,7 @@ NextLine:
     End Sub
 
     Sub LoadQueue(ByVal loadpath As String)
-        Console.WriteLine("LoadQueue")
+        Console.WriteLine("DuckDl: > LoadQueue")
         Dim f As StreamReader = My.Computer.FileSystem.OpenTextFileReader(loadpath)
         Dim line As String = f.ReadLine
         Console.WriteLine(line)
@@ -659,8 +626,6 @@ attempt_line:
                     Return
                 ElseIf action = MsgBoxResult.Retry Then
                     GoTo attempt_line
-                Else
-                    'Next line
                 End If
             End Try
             line = f.ReadLine
@@ -678,6 +643,8 @@ attempt_line:
             SaveQueue(SaveQueueDialog.FileName)
         End If
     End Sub
+
+#Region "Buttons/Menus"
 
     ' Side tool menu
     Private Sub Play_Click_1(sender As Object, e As EventArgs) Handles Play.Click
@@ -718,13 +685,14 @@ attempt_line:
 
     Private Sub AddVideoFromFileToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles AddVideoFromFileToolStripMenuItem.Click
         If AddFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            IO.File.Copy(AddFileDialog.FileName, LibraryLocation & "\" & FileNameFromPath(AddFileDialog.FileName))
+            File.Copy(AddFileDialog.FileName, LibraryLocation & "\" & FileNameFromPath(AddFileDialog.FileName))
             GetDownloadedVideos()
         End If
     End Sub
 
     '[Tools] - Downloads button
     Private Sub DownloadVideoToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles DownloadVideoToolStripMenuItem.Click
+        Console.WriteLine("DuckDl: > DownloadToolStripMenuItem_Click_1")
         Dim url As String = InputBox("Enter the URL of the video you want to download:", "Download a Video")
         If url <> "" Then
             If UrlIsValid(url) Then
@@ -739,6 +707,7 @@ attempt_line:
     End Sub
 
     Private Sub DownloadPlaylistToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles DownloadPlaylistToolStripMenuItem.Click
+        Console.WriteLine("DuckDl: > DownloadPlaylistToolStripMenuItem_Click_1")
         Dim url As String = InputBox("Enter the URL of the playlist you want to download:", "Download Playlist")
         If url <> "" Then
             If UrlIsValid(url) Then
@@ -772,7 +741,7 @@ attempt_line:
     End Sub
     Private Sub OpenFileOfURLsToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles OpenFileOfURLsToolStripMenuItem.Click
         If OpenURLListDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-            Dim lines As String() = IO.File.ReadAllLines(OpenURLListDialog.FileName)
+            Dim lines As String() = File.ReadAllLines(OpenURLListDialog.FileName)
             Dim fmt As String = PromptForFormat(lines(0))
             If fmt <> FORMAT_UNKNOWN Then AddMultipleVideos(lines, fmt)
         End If
@@ -794,4 +763,5 @@ attempt_line:
     Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
         MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
     End Sub
+#End Region
 End Class
