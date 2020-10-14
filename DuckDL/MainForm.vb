@@ -9,7 +9,7 @@ Public Class MainForm
     Public Const Twitter_URL_FORMAT As String = "https://twitter.com/i/status/{0}"
     Public Const Instagram_URL_FORMAT As String = "https://www.instagram.com/p/{0}"
     Public Const Facebook_URL_FORMAT As String = "https://www.facebook.com/watch/?v={0}"
-    Public Const Reddit_URL_FORMAT As String = "https://www.reddit.com/comments/{0}"
+    Public Shared Reddit_URL_FORMAT As String = "https://www.reddit.com/comments/{0}"
 
     Public Const FORMAT_UNKNOWN As String = "FORMAT_UNKNOWN"
     Public Const FORMAT_BEST As String = "FORMAT_BEST"
@@ -69,13 +69,9 @@ Public Class MainForm
         Public Sub New(ByVal fName As String)
             Console.WriteLine("Workable URL section activated!!!")
             Dim fPieces() As String = fName.Split("."c)
-            Console.WriteLine(String.Join(Environment.NewLine, fPieces))
-
-
             'If fPieces.Count < 4 Then
             '    Throw New ArgumentOutOfRangeException("fName.split('.').count", fPieces.Count, "Not a redownloadable filename (not enough pieces).")
             'End If
-
             For Each pieces As String In fPieces
                 Console.WriteLine(pieces)
                 If pieces = "youtube" Then
@@ -94,38 +90,29 @@ Public Class MainForm
                     Url = String.Format(Facebook_URL_FORMAT, fPieces(fPieces.Count - 2))
                     Console.WriteLine("Facebook Ping!")
                 End If
+                REM Null value might be because there is no name
                 If pieces = "reddit" Then
-                    Url = String.Format(Reddit_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    Dim shortUrl As String
+                    shortUrl = String.Format(Reddit_URL_FORMAT, fPieces(fPieces.Count - 2))
+                    redditWebRequest(shortUrl)
                     Console.WriteLine("Reddit Ping!")
+                    Console.WriteLine(redditWebRequest(shortUrl))
+                    Url = redditWebRequest(shortUrl)
                 End If
             Next
-            'Dim _format As String = fPieces(fPieces.Count - 3)
-
-            'If Not IsNumeric(_format) Then
-            '    Throw New ArgumentOutOfRangeException("fName.split('.')[count-3]", _format, "Filename format piece is invalid (not a number).")
-            'End If
-
-            'Format = CInt(_format)
-            'Name = ""
-
-            'For i As Integer = 0 To fPieces.Count - 4
-            '    Name &= fPieces(i) & "."
-            'Next
-            'If Name.Length > 1 Then Name = Name.Remove(Name.Length - 1)
         End Sub
 
         Public Shared Function FromString(ByVal s As String) As VideoDownload
+            Console.WriteLine("FromString")
             Dim sPcs() As String = s.Split(";"c)
+            Console.WriteLine(sPcs)
             Dim vd As New VideoDownload
             If sPcs.Count <> 3 Then
                 Throw New ArgumentException("Input string is not a download entry (semicolon ct. =/= 2).", s)
             End If
-            If Not IsNumeric(sPcs(2)) Then
-                Throw New ArgumentOutOfRangeException("s.split(';')[2]", sPcs(2), "Format part of download entry is not a number.")
-            End If
             vd.Url = sPcs(0)
             vd.Name = sPcs(1)
-            vd.Format = CInt(sPcs(2))
+            vd.Format = sPcs(2)
             Return vd
         End Function
     End Class
@@ -196,8 +183,11 @@ Public Class MainForm
     End Function
 
     Sub AddVideoToQueue(v2d As VideoDownload)
+        Console.WriteLine("AddVideoToQueue")
         VideoQueue.Enqueue(v2d)
+        Console.WriteLine(v2d)
         QueueBox.Items.Add(v2d.Name)
+        Console.WriteLine(v2d.Name)
         QueueBox.Update()
         UpdateDLButton()
     End Sub
@@ -310,6 +300,7 @@ Public Class MainForm
             CurDLCancel.Enabled = True
             dldr = New Process
             dldr.StartInfo.FileName = Downloader
+            ' Make this a variable then change depending on whether or not it's reddit or others, saves lines.
             dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
             'Console.WriteLine(dldr.StartInfo.Arguments)
             'Debugger.Break()
@@ -413,6 +404,8 @@ Public Class MainForm
     Sub GetDownloadedVideos()
         Dim vids As IEnumerable(Of String) = IO.Directory.EnumerateFiles(LibraryLocation)
         Dim idx As Integer = 0
+        Console.WriteLine("idx")
+        Console.WriteLine(idx)
         Dim url As String
         VideoList.Clear()
         VideoIconList.Images.Clear()
@@ -457,8 +450,8 @@ Public Class MainForm
         InfOut = New Text.StringBuilder()
         Dim NewProcess As New Process()
         'SB-Ansel - Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
-        'Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
-        'WaitDlg.Show()
+        Dim WaitDlg As New Electroduck.Controls.WaitDialog(progressTxt, True)
+        WaitDlg.Show()
         With NewProcess.StartInfo
             .FileName = Downloader
             .Arguments = args & " """ & url & """"
@@ -478,7 +471,7 @@ Public Class MainForm
         NewProcess.BeginOutputReadLine()
         NewProcess.WaitForExit()
         Cursor = Cursors.Default
-        'WaitDlg.Close()
+        WaitDlg.Close()
         Return InfOut.ToString
     End Function
 
@@ -500,36 +493,49 @@ Public Class MainForm
 
     REM SB-Ansel - This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
     ' this section is supposed to take the filename, split it up to retrieve the video ID.
+    Public Shared Function redditWebRequest(ByVal url As String) As String
+        Console.WriteLine("Reddit Web Request")
+        DomainName(url) ' Activate DomainName
+        If DomainName(url) = "reddit" Then
+            Dim web_request As HttpWebRequest = WebRequest.Create(url + "/file.json")
+            Dim web_response As WebResponse = web_request.GetResponse()
+            web_request.ContentType = "application/json; charset=utf-8"
+            web_request.MaximumAutomaticRedirections = 2
+            web_request.UserAgent = "Nothing"
+            web_request.AllowAutoRedirect = True
+            Dim s = web_request.GetResponse().GetResponseStream()
+            Dim sr = New StreamReader(s)
+            Dim contributorsAsJson = sr.ReadToEnd()
+            Dim contributors = JsonConvert.DeserializeObject(contributorsAsJson).ToString
+            Dim parse = JArray.Parse(contributors)
+            Dim urlPART = parse.SelectToken("$.[0].data.children[0].data.permalink").ToString
+            Console.WriteLine("https://www.reddit.com" + urlPART)
+            'Console.WriteLine(parse.SelectToken("$.[0].data.children[0].data.permalink"))
+            web_response.Dispose()
+            web_response.Close()
+
+            Dim actualURL = "https://www.reddit.com" + urlPART
+            Return actualURL
+        End If
+    End Function
+
     Sub RedownloadSelectedVideo()
         If VideoList.SelectedItems.Count > 0 Then
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
-            Try
-                Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-                dl.Format = PromptForFormat(dl.Url)
-                If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
-            Catch ex As Exception
-                GoTo cannot
-            End Try
-        Else
-            GoTo cannot
-        End If
-        Return
-cannot:
-        MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Whoopsie!")
-    End Sub
 
-    'Sub RedownloadSelectedVideo()
-    '    Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-    '    Dim fname As String = VideoList.SelectedItems(0).Text
-    '    Dim fpieces() As String = fname.Split("."c)
-    '    Console.WriteLine(String.Join(Environment.NewLine, fpieces))
-    '    Console.WriteLine(dl.Url)
-    '    dl.Format = PromptForFormat(dl.Url)
-    '    Console.WriteLine("JAKEJAKEJAKEJAKEJAKE!!!!!")
-    '    Console.WriteLine(dl.Format)
-    '    If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
-    'End Sub
+            If fpieces.Count > 3 Then
+                Try
+                    Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+                    dl.Format = PromptForFormat(dl.Url)
+                    Console.WriteLine(dl.Format)
+                    If dl.Format <> FORMAT_UNKNOWN Then AddVideoToQueue(dl)
+                Catch ex As Exception
+                    MsgBox("This video cannot be redownloaded.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "Sorry")
+                End Try
+            End If
+        End If
+    End Sub
 
     'SB-Ansel - Open selected item in browser!
     Sub OpenInWebBrowser() ' New feature.
@@ -576,32 +582,9 @@ NextLine:
 
     'SB-Ansel - Format Dialog box, select format to which to download the video in.
     Public Shared Function PromptForFormat(ByVal url As String) As String
-        DomainName(url) ' Activate DomainName
-        If DomainName(url) = "reddit" Then
-            Dim web_request As HttpWebRequest = WebRequest.Create(url + "/file.json")
-            Dim web_response As WebResponse = web_request.GetResponse()
-            web_request.ContentType = "application/json; charset=utf-8"
-            web_request.MaximumAutomaticRedirections = 2
-            web_request.UserAgent = "Nothing"
-            web_request.AllowAutoRedirect = True
-
-            Dim s = web_request.GetResponse().GetResponseStream()
-            Dim sr = New StreamReader(s)
-            Dim contributorsAsJson = sr.ReadToEnd()
-            Dim contributors = JsonConvert.DeserializeObject(contributorsAsJson).ToString
-            Dim parse = JArray.Parse(contributors)
-
-            Dim urlPART = parse.SelectToken("$.[0].data.children[0].data.permalink").ToString
-            Console.WriteLine("https://www.reddit.com" + urlPART)
-            'Console.WriteLine(parse.SelectToken("$.[0].data.children[0].data.permalink"))
-            web_response.Dispose()
-            web_response.Close()
-            url = "https://www.reddit.com" + urlPART
-        End If
 
         Console.WriteLine("PromptForFormat Activated!")
         Dim dlg As New FormatDialog(url)
-        Console.WriteLine(String.Join(Environment.NewLine, dlg))
         If dlg.ShowDialog = Windows.Forms.DialogResult.OK Then
             Console.WriteLine(dlg.SelectedFormat)
             Return dlg.SelectedFormat
@@ -653,7 +636,7 @@ NextLine:
     End Sub
 
     Sub SaveQueue(ByVal savepath As String)
-        Dim f As IO.StreamWriter = My.Computer.FileSystem.OpenTextFileWriter(savepath, False)
+        Dim f As StreamWriter = My.Computer.FileSystem.OpenTextFileWriter(savepath, False)
         For Each dl As VideoDownload In VideoQueue
             f.WriteLine(dl.ToString)
         Next
@@ -661,8 +644,10 @@ NextLine:
     End Sub
 
     Sub LoadQueue(ByVal loadpath As String)
-        Dim f As IO.StreamReader = My.Computer.FileSystem.OpenTextFileReader(loadpath)
+        Console.WriteLine("LoadQueue")
+        Dim f As StreamReader = My.Computer.FileSystem.OpenTextFileReader(loadpath)
         Dim line As String = f.ReadLine
+        Console.WriteLine(line)
         While line IsNot Nothing
 attempt_line:
             Try
@@ -758,8 +743,8 @@ attempt_line:
         If url <> "" Then
             If UrlIsValid(url) Then
                 Dim vidIDs As String() = GetVideoInfo("--get-id", url, "Enumerating playlist...").Split(vbNewLine)
-                Dim u As String = ""
                 Dim fmt As String = PromptForFormat(String.Format(YT_URL_FORMAT, vidIDs(0).Trim))
+                Dim u As String = ""
                 If fmt <> FORMAT_UNKNOWN Then
                     For Each vidID As String In vidIDs
                         vidID = vidID.Trim()
