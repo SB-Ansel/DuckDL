@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Net
 Imports System.Text.RegularExpressions
+Imports System.Reflection
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 
@@ -108,7 +109,7 @@ Public Class MainForm
         Public Shared Function FromString(ByVal s As String) As VideoDownload
             Console.WriteLine("DuckDl: > FromString")
             Dim sPcs() As String = s.Split(";"c)
-            Console.WriteLine(sPcs)
+            'Console.WriteLine(sPcs)
             Dim vd As New VideoDownload
             If sPcs.Count <> 3 Then
                 Throw New ArgumentException("Input string is not a download entry (semicolon ct. =/= 2).", s)
@@ -125,24 +126,19 @@ Public Class MainForm
     Private ReadOnly Icn_Film As Bitmap = My.Resources.icn_film
     Private ReadOnly Icn_Sound As Bitmap = My.Resources.icn_sound
 
-    'SB-Ansel - 'Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)'
-    REM look into changing this so duckdl doesn't require admin priv
+    'SB-Ansel - Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)
     Private Sub Microsoft_VC2010_Check() Handles MyBase.Load
-        Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\10.0\VC\VCRedist\x86", "Version", Nothing)
+        Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer\Products\1D5E3C0FEDA1E123187686FED06E995A", "Version", Nothing) ' Microsoft Visual C++ 2010 Redistributable (x86)
         If regKey Is Nothing Then
-            VC2010_MSGBOX()
+            MessageBox.Show("DuckDL requires Microsoft Visual C++ 2010 redistributable package (x86) in order to work properly, by pressing ok DuckDL will close and will automatically install Microsoft Visuall C++ 2010 for you.", "Microsoft Visual C++ 2010 required!", MessageBoxButtons.OK)
+            Close()
             Process.Start(Application.StartupPath() & "vcredist_x86.exe")
         Else
             'Continue with application load to main screen etc
             Shell("youtube-dl.exe --update") '-SB-Ansel - This is shit but it's an easy way of automatically updating youtube-dl in the background for now.
         End If
     End Sub
-    'SB-Ansel - Popbox to prompt the user to install C++ Redist package.
-    Private Sub VC2010_MSGBOX()
-        REM TODO: Simplify this statement to be inline with Microsoft_VC2010_Check()
-        Dim result = MessageBox.Show("DuckDL requires Microsoft Visual C++ 2010 redistributable package (x86) in order to work properly, by pressing ok DuckDL will close and will automatically install Microsoft Visuall C++ 2010 for you.", "Microsoft Visual C++ 2010 required!", MessageBoxButtons.OK)
-        Close()
-    End Sub
+
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' If there is a FILE (not a dir) which occupies the library location, delete it
         If File.Exists(LibraryLocation) Then File.Delete(LibraryLocation)
@@ -157,6 +153,9 @@ Public Class MainForm
         CurDLCancel.Enabled = False
         UpdateDLButton()
         GetDownloadedVideos()
+        'Mainform - version label
+        Dim versionlabel = Assembly.GetExecutingAssembly().GetName().Version.ToString
+        Duck_Version.Text = versionlabel
     End Sub
     Private Sub MainForm_Closing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         SaveQueue(QueueLocation)
@@ -186,9 +185,9 @@ Public Class MainForm
 
     Sub AddVideoToQueue(v2d As VideoDownload)
         Console.WriteLine("DuckDl: > AddVideoToQueue")
-        Console.WriteLine(String.Join(Environment.NewLine, v2d))
+        'Console.WriteLine(String.Join(Environment.NewLine, v2d))
         VideoQueue.Enqueue(v2d)
-        Console.WriteLine(String.Join(Environment.NewLine, v2d.Name))
+        'Console.WriteLine(String.Join(Environment.NewLine, v2d.Name))
         QueueBox.Items.Add(v2d.Name)
         QueueBox.Update()
         UpdateDLButton()
@@ -395,12 +394,17 @@ Public Class MainForm
         VideoList.Clear()
         VideoIconList.Images.Clear()
         For Each vid As String In vids
-            If vid.ToUpper.EndsWith("MP4") Or vid.ToUpper.EndsWith("FLV") Or vid.ToUpper.EndsWith("WEBM") _
-                Or vid.ToUpper.EndsWith("3GP") Or vid.ToUpper.EndsWith("AVI") Then
+            If vid.ToUpper.EndsWith("MP4") _
+                    Or vid.ToUpper.EndsWith("FLV") _
+                    Or vid.ToUpper.EndsWith("WEBM") _
+                    Or vid.ToUpper.EndsWith("3GP") _
+                    Or vid.ToUpper.EndsWith("AVI") Then
                 VideoList.Items.Add(FileNameFromPath(vid), idx)
                 VideoIconList.Images.Add(Icn_Film)
+
                 url = String.Format(YT_URL_FORMAT, vid.Split("-").Last.Split(".")(0))
                 idx += 1
+
             ElseIf vid.ToUpper.EndsWith("M4A") Then
                 VideoList.Items.Add(FileNameFromPath(vid), idx)
                 VideoIconList.Images.Add(Icn_Sound)
@@ -435,8 +439,8 @@ Public Class MainForm
         InfOut = New Text.StringBuilder()
         Dim NewProcess As New Process()
         'SB-Ansel - Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
-        Dim WaitDlg As New Controls.WaitDialog(progressTxt, True)
-        WaitDlg.Show()
+        'Dim WaitDlg As New Controls.WaitDialog(progressTxt, True)
+        'WaitDlg.Show()
         With NewProcess.StartInfo
             .FileName = Downloader
             .Arguments = args & " """ & url & """"
@@ -454,7 +458,7 @@ Public Class MainForm
         NewProcess.BeginOutputReadLine()
         NewProcess.WaitForExit()
         Cursor = Cursors.Default
-        WaitDlg.Close()
+        'WaitDlg.Close()
         Return InfOut.ToString
     End Function
 
@@ -475,7 +479,6 @@ Public Class MainForm
     End Sub
 
     REM SB-Ansel - This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
-    ' this section is supposed to take the filename, split it up to retrieve the video ID.
     Public Shared Function RedditWebRequest(ByVal url As String) As String
         Console.WriteLine("DuckDl: > Reddit Web Request")
         'DomainName(url) ' Activate DomainName
@@ -521,10 +524,16 @@ Public Class MainForm
 
     'SB-Ansel - Open selected item in browser!
     Sub OpenInWebBrowser() ' New feature.
-        Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
-        Dim fname As String = VideoList.SelectedItems(0).Text
-        Dim fpieces() As String = fname.Split("."c)
-        Process.Start(dl.Url)
+        Console.WriteLine("DuckDl: > OpenInWebBrowser!")
+        Try
+            Dim dl As New VideoDownload(VideoList.SelectedItems(0).Text)
+            Dim fname As String = VideoList.SelectedItems(0).Text
+            Dim fpieces() As String = fname.Split("."c)
+            Process.Start(dl.Url)
+        Catch ex As Exception
+            'Silence is golden!!
+            'This will be passed if the user pressing the button without selecting a item from the videolist.
+        End Try
     End Sub
 
     Enum ContinueOrCancel
@@ -643,7 +652,6 @@ attempt_line:
             SaveQueue(SaveQueueDialog.FileName)
         End If
     End Sub
-
 #Region "Buttons/Menus"
 
     ' Side tool menu
@@ -665,14 +673,11 @@ attempt_line:
     Private Sub OpenInBrowser_Click(sender As Object, e As EventArgs) Handles OpenInBrowser.Click
         OpenInWebBrowser()
     End Sub
-
-    'Private Sub Microsoft_VC2010_Check(sender As Object, e As EventArgs) Handles MyBase.Load
-    'End Sub
-
     'Top tool menu
     ' File button
     Private Sub PreferencesToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles PreferencesToolStripMenuItem.Click
-        config1.Show()
+        'config1.Show()        
+        ConfigMenu.Show()
     End Sub
 
     Private Sub ExitToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
@@ -761,7 +766,16 @@ attempt_line:
     End Sub
 
     Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
-        MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
+        'MsgBox("Manual update check [WIP] - gilnicki", MsgBoxStyle.OkOnly + MsgBoxStyle.Information, "DuckDL update check!")
+        UpdateDialog.Show()
+    End Sub
+    Private Sub Refresh_Click(sender As Object, e As EventArgs) Handles Refresh.Click
+        GetDownloadedVideos()
+    End Sub
+
+    Private Sub RefreshToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RefreshToolStripMenuItem.Click
+        'SB-Ansel - It's a button on the main tool strip which I've hidden to enable F5 functionality.
+        GetDownloadedVideos()
     End Sub
 #End Region
 End Class

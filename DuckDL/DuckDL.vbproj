@@ -132,10 +132,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ApplicationEvents.vb" />
-    <Compile Include="Config1.Designer.vb">
-      <DependentUpon>Config1.vb</DependentUpon>
+    <Compile Include="ConfigMenu.Designer.vb">
+      <DependentUpon>ConfigMenu.vb</DependentUpon>
     </Compile>
-    <Compile Include="Config1.vb">
+    <Compile Include="ConfigMenu.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormatDialog.Designer.vb">
@@ -179,13 +179,19 @@
     <Compile Include="TextBoxDialog.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UpdateDialog.Designer.vb">
+      <DependentUpon>UpdateDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Config1.resx">
-      <DependentUpon>Config1.vb</DependentUpon>
+    <EmbeddedResource Include="ConfigMenu.resx">
+      <DependentUpon>ConfigMenu.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormatDialog.resx">
       <DependentUpon>FormatDialog.vb</DependentUpon>
@@ -205,6 +211,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TextBoxDialog.resx">
       <DependentUpon>TextBoxDialog.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateDialog.resx">
+      <DependentUpon>UpdateDialog.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -10,4 +10,8 @@
     Private Sub Apply_Click(sender As Object, e As EventArgs) Handles Apply.Click
 
     End Sub
+
+    Private Sub config1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
 End Class
