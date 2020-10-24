@@ -1,4 +1,4 @@
-# DuckDL Video Downloader <a href="url"><img src="https://raw.githubusercontent.com/SB-Ansel/DuckDL/development/DuckDL/Resources/Duck.png" width="100" ></a>
+# DuckDL <a href="url"><img src="https://raw.githubusercontent.com/SB-Ansel/DuckDL/development/DuckDL/Resources/Duck.png" width="100" ></a>
 
 > QUACK!!
 
