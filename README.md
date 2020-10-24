@@ -4,7 +4,7 @@
 
 ## Preamble
 
-DuckDL is a Windows GUI frontend for *youtube-dl*. DuckDL includes download queueing, downloading of entire playlists, and a library interface for managing downloaded videos.
+DuckDL is a Windows GUI frontend for *youtube-dl*.
 
 ## License
 
