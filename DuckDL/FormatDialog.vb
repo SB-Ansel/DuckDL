@@ -71,7 +71,7 @@ Public Class FormatDialog
             FormatList.Items.Add($"{">"}{fmt.Details}")
         Next
     End Sub
-    'SB-Ansel - 08/27/2020, modifed the video downloader section to include tool tips, a custom input box for youtube-dl commands, and to be generally more user frendly.
+    '08/27/2020, modifed the video downloader section to include tool tips, a custom input box for youtube-dl commands, and to be generally more user frendly.
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
         Process.Start("https://github.com/ytdl-org/youtube-dl/blob/master/README.md#format-selection")
     End Sub

@@ -67,7 +67,7 @@ Public Class MainForm
             Format = __format
         End Sub
 
-        'SB-Ansel - takes the pieces and formats them into a workable URL
+        ' takes the pieces and formats them into a workable URL
         Public Sub New(ByVal fName As String)
             Console.WriteLine("DuckDl: > Workable URL section activated!!!")
             Dim fPieces() As String = fName.Split("."c)
@@ -127,7 +127,7 @@ Public Class MainForm
     Private ReadOnly Icn_Film As Bitmap = My.Resources.icn_film
     Private ReadOnly Icn_Sound As Bitmap = My.Resources.icn_sound
 
-    'SB-Ansel - Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)
+    ' Registry check to see if the users machine has Microsoft Visual C++ 2010 redistributable package (x86)
     Private Sub Microsoft_VC2010_Check() Handles MyBase.Load
         Dim regKey As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Installer\Products\1D5E3C0FEDA1E123187686FED06E995A", "Version", Nothing) ' Microsoft Visual C++ 2010 Redistributable (x86)
         If regKey Is Nothing Then
@@ -136,7 +136,7 @@ Public Class MainForm
             Process.Start(Application.StartupPath() & "vcredist_x86.exe")
         Else
             'Continue with application load to main screen etc
-            Shell("youtube-dl.exe --update") '-SB-Ansel - This is shit but it's an easy way of automatically updating youtube-dl in the background for now.
+            Shell("youtube-dl.exe --update") ' This is shit but it's an easy way of automatically updating youtube-dl in the background for now.
         End If
     End Sub
 
@@ -202,7 +202,28 @@ Public Class MainForm
         End If
     End Sub
 
+    'Sub RemoveVideoFromQueue(id As Integer)
+    '    Console.WriteLine("DuckDL:> RemoveVideoFromeQueue")
+    '    If QueueBox.SelectedItems.Count > 0 Then
+    '        Console.WriteLine(id)
+    '        Dim tmp As List(Of VideoDownload) = VideoQueue.ToList
+    '        Console.WriteLine(tmp)
+    '        tmp.RemoveAt(id)
+    '        VideoQueue.Clear()
+    '        For Each st As VideoDownload In tmp
+    '            Console.WriteLine("teeeeeeeeeeeee")
+    '            VideoQueue.Enqueue(st)
+    '        Next
+    '        QueueBox.Items.RemoveAt(id)
+    '        QueueBox.Update()
+    '    Else
+    '        Console.WriteLine("REEEEEEEE")
+    '        RemoveSelectedToolStripMenuItem.Enabled = False
+    '        ClearAllToolStripMenuItem.Enabled = False
+    '    End If
+    'End Sub
     Sub RemoveVideoFromQueue(id As Integer)
+        Console.WriteLine("DuckDL:> RemoveVideoFromeQueue")
         If QueueBox.SelectedItems.Count > 0 Then
             Dim tmp As List(Of VideoDownload) = VideoQueue.ToList
             tmp.RemoveAt(id)
@@ -212,9 +233,13 @@ Public Class MainForm
             Next
             QueueBox.Items.RemoveAt(id)
             QueueBox.Update()
-        Else
             RemoveSelectedToolStripMenuItem.Enabled = False
             ClearAllToolStripMenuItem.Enabled = False
+            If QueueBox.SelectedItems.Count = 0 Then
+                Console.WriteLine("Ping!")
+                'DownloadDone()
+                DLQueuedVidsBtn.Enabled = False
+            End If
         End If
     End Sub
 
@@ -262,9 +287,9 @@ Public Class MainForm
         End If
         If curDL.Format = FORMAT_BEST Then
             Console.WriteLine("Logging best")
-            ' SB-Ansel - Attempts to download bestvideo, failing that it will choose another format.
-            formatString = " -f bestvideo[height<=?720]+bestaudio/best "
-            'formatString = " -f best "
+            '  Attempts to download bestvideo, failing that it will choose another format.
+            'formatString = " -f bestvideo[height<=?720]+bestaudio/best "
+            formatString = " -f best "
         End If
         If curDL.Format = FORMAT_BESTAUDIO Then
             formatString = " -f bestaudio "
@@ -323,7 +348,7 @@ Public Class MainForm
             End If
         End If
     End Sub
-    ' SB-Ansel - Check to see if the suppiled URL is a real URL.
+    '  Check to see if the suppiled URL is a real URL.
     Private Function UrlIsValid(ByVal url As String) As Boolean
         If url.ToLower().StartsWith("www.") Then url = "http://" & url
         Dim web_response As HttpWebResponse = Nothing
@@ -373,7 +398,7 @@ Public Class MainForm
             UpdateDLButton()
         End If
     End Sub
-    'SB-Ansel - Populate main window with icons in relation to file type.
+    ' Populate main window with icons in relation to file type.
     Sub GetDownloadedVideos()
         Dim vids As IEnumerable(Of String) = Directory.EnumerateFiles(LibraryLocation)
         Dim idx As Integer = 0
@@ -422,14 +447,14 @@ Public Class MainForm
         Next
     End Sub
 
-    'SB-Ansel - Function GetVideoInfo, retrieves video info from youtube-dl to populate the avalable file formats window.
+    ' Function GetVideoInfo, retrieves video info from youtube-dl to populate the avalable file formats window.
     Private Shared InfOut As Text.StringBuilder = Nothing
 
 
     Public Function GetVideoInfo(ByVal args As String, ByVal url As String, Optional ByVal progressTxt As String = "Downloading information...") As String
         InfOut = New Text.StringBuilder()
         Dim NewProcess As New Process()
-        'SB-Ansel - Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
+        ' Disabled Electroducks control.dll here, in favor of using the cursor to indict progress, looks less clunky.
         'Dim WaitDlg As New Controls.WaitDialog(progressTxt, True)
         'WaitDlg.Show()
         With NewProcess.StartInfo
@@ -469,7 +494,7 @@ Public Class MainForm
         Loop
     End Sub
 
-    REM SB-Ansel - This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
+    REM  This sections needs to check whether the original source still has the video available, check for error on youtube-dl stdrout.
     Public Shared Function RedditWebRequest(ByVal url As String) As String
         Console.WriteLine("DuckDl: > Reddit Web Request")
         'DomainName(url) ' Activate DomainName
@@ -497,7 +522,6 @@ Public Class MainForm
         End If
     End Function
     Public Sub RedownloadSelectedVideo()
-        Console.WriteLine("DuckDl: > RedownloadSelectedVideo")
         If VideoList.SelectedItems.Count > 0 Then
             Dim fname As String = VideoList.SelectedItems(0).Text
             Dim fpieces() As String = fname.Split("."c)
@@ -513,7 +537,7 @@ Public Class MainForm
         End If
     End Sub
 
-    'SB-Ansel - Open selected item in browser!
+    ' Open selected item in browser!
     Sub OpenInWebBrowser() ' New feature.
         Console.WriteLine("DuckDl: > OpenInWebBrowser!")
         Try
@@ -560,7 +584,7 @@ ShowDlg:
 NextLine:
         Next
     End Sub
-    'SB-Ansel - Format Dialog box, select format to which to download the video in.
+    ' Format Dialog box, select format to which to download the video in.
     Public Shared Function PromptForFormat(ByVal url As String) As String
         Console.WriteLine("DuckDl: > PromptForFormat Activated!")
         Dim dlg As New FormatDialog(url)
@@ -578,7 +602,7 @@ NextLine:
         sanitiseURL = Regex.Replace(curDL, "(http:\/\/|https:\/\/)(www.)?|(.com)\/.*", "")
         Return sanitiseURL
     End Function
-    'SB-Ansel - Cause Reddit is special <3!
+    ' Cause Reddit is special <3!
     Public Shared Function RedditURL(ByVal curDL As String) As String
         Console.WriteLine("DuckDl: > RedditID Activated!")
         Dim redditID As String
@@ -592,7 +616,7 @@ NextLine:
             CurDLCancel.Enabled = False
             LifeCheck.Enabled = False
             MsgBox("Failed to download video: " & vbNewLine & curDL.Name & vbNewLine & curDL.Url & vbNewLine & "In format: " & curDL.Format, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "DuckDL - Error!")
-            ' SB-Ansel - Return failed download to queue!
+            '  Return failed download to queue!
             AddVideoToQueue(New VideoDownload(curDL.Url, GetVideoName(curDL.Url), curDL.Format))
             CurDLProgress.Text = "Download failed :("
             Console.WriteLine("")
@@ -600,7 +624,7 @@ NextLine:
             GetDownloadedVideos()
         End If
     End Sub
-    ' SB-Ansel - Play video using system assocations.
+    '  Play video using system assocations.
     Sub PlayVideo(ByVal path As String)
         Process.Start(path)
     End Sub
@@ -772,7 +796,7 @@ attempt_line:
     End Sub
 
     Private Sub RefreshToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RefreshToolStripMenuItem.Click
-        'SB-Ansel - It's a button on the main tool strip which I've hidden to enable F5 functionality.
+        ' It's a button on the main tool strip which I've hidden to enable F5 functionality.
         GetDownloadedVideos()
     End Sub
 #End Region

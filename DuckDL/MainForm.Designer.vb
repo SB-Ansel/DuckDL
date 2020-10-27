@@ -283,7 +283,7 @@ Partial Class MainForm
         Me.TableLayoutPanel2.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.TableLayoutPanel2.ColumnCount = 2
         Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 119.0!))
+        Me.TableLayoutPanel2.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122.0!))
         Me.TableLayoutPanel2.Controls.Add(Me.Label1, 1, 0)
         Me.TableLayoutPanel2.Controls.Add(Me.VideoList, 0, 1)
         Me.TableLayoutPanel2.Controls.Add(Me.Label2, 0, 0)
@@ -305,11 +305,11 @@ Partial Class MainForm
         Me.Label1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.Label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.Label1.Location = New System.Drawing.Point(566, 1)
+        Me.Label1.Location = New System.Drawing.Point(563, 1)
         Me.Label1.Name = "Label1"
         Me.Label1.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(113, 21)
+        Me.Label1.Size = New System.Drawing.Size(116, 21)
         Me.Label1.TabIndex = 3
         Me.Label1.Text = "Video Actions"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -325,7 +325,7 @@ Partial Class MainForm
         Me.VideoList.LargeImageList = Me.VideoIconList
         Me.VideoList.Location = New System.Drawing.Point(4, 26)
         Me.VideoList.Name = "VideoList"
-        Me.VideoList.Size = New System.Drawing.Size(555, 525)
+        Me.VideoList.Size = New System.Drawing.Size(552, 525)
         Me.VideoList.SmallImageList = Me.VideoIconList
         Me.VideoList.TabIndex = 1
         Me.VideoList.UseCompatibleStateImageBehavior = False
@@ -348,7 +348,7 @@ Partial Class MainForm
         Me.Label2.Location = New System.Drawing.Point(4, 1)
         Me.Label2.Name = "Label2"
         Me.Label2.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.Label2.Size = New System.Drawing.Size(555, 16)
+        Me.Label2.Size = New System.Drawing.Size(552, 16)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Video List"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -365,10 +365,10 @@ Partial Class MainForm
         Me.Panel1.Controls.Add(Me.Delete)
         Me.Panel1.Controls.Add(Me.Show_in_folder)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel1.Location = New System.Drawing.Point(566, 26)
+        Me.Panel1.Location = New System.Drawing.Point(563, 26)
         Me.Panel1.MinimumSize = New System.Drawing.Size(108, 525)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(113, 525)
+        Me.Panel1.Size = New System.Drawing.Size(116, 525)
         Me.Panel1.TabIndex = 5
         '
         'Duck_Version
@@ -377,7 +377,7 @@ Partial Class MainForm
         Me.Duck_Version.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.Duck_Version.Location = New System.Drawing.Point(0, 504)
         Me.Duck_Version.Name = "Duck_Version"
-        Me.Duck_Version.Size = New System.Drawing.Size(113, 21)
+        Me.Duck_Version.Size = New System.Drawing.Size(116, 21)
         Me.Duck_Version.TabIndex = 8
         Me.Duck_Version.Text = "Version"
         Me.Duck_Version.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -461,7 +461,7 @@ Partial Class MainForm
         Me.DownloadingLayout.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.[Single]
         Me.DownloadingLayout.ColumnCount = 2
         Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 425.0!))
+        Me.DownloadingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 428.0!))
         Me.DownloadingLayout.Controls.Add(Me.CurDLLabel, 1, 0)
         Me.DownloadingLayout.Controls.Add(Me.QueueLabel, 0, 0)
         Me.DownloadingLayout.Controls.Add(Me.QueueBox, 0, 1)
@@ -482,11 +482,11 @@ Partial Class MainForm
         Me.CurDLLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.CurDLLabel.Image = Global.Electroduck.DuckDL.My.Resources.Resources.icn_computer_link
         Me.CurDLLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.CurDLLabel.Location = New System.Drawing.Point(260, 1)
+        Me.CurDLLabel.Location = New System.Drawing.Point(257, 1)
         Me.CurDLLabel.Name = "CurDLLabel"
         Me.CurDLLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
         Me.CurDLLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.CurDLLabel.Size = New System.Drawing.Size(419, 21)
+        Me.CurDLLabel.Size = New System.Drawing.Size(422, 21)
         Me.CurDLLabel.TabIndex = 3
         Me.CurDLLabel.Text = "Current Download"
         '
@@ -500,7 +500,7 @@ Partial Class MainForm
         Me.QueueLabel.Location = New System.Drawing.Point(4, 1)
         Me.QueueLabel.Name = "QueueLabel"
         Me.QueueLabel.Padding = New System.Windows.Forms.Padding(0, 3, 0, 0)
-        Me.QueueLabel.Size = New System.Drawing.Size(249, 21)
+        Me.QueueLabel.Size = New System.Drawing.Size(246, 21)
         Me.QueueLabel.TabIndex = 1
         Me.QueueLabel.Text = "Downloading Queue"
         '
@@ -517,7 +517,7 @@ Partial Class MainForm
         Me.QueueBox.Items.AddRange(New Object() {"Video 1", "Video 2", "Another Video", "More Videos"})
         Me.QueueBox.Location = New System.Drawing.Point(4, 26)
         Me.QueueBox.Name = "QueueBox"
-        Me.QueueBox.Size = New System.Drawing.Size(249, 67)
+        Me.QueueBox.Size = New System.Drawing.Size(246, 67)
         Me.QueueBox.TabIndex = 4
         '
         'QueueMenu
@@ -560,9 +560,9 @@ Partial Class MainForm
         Me.CurDLPanel.Controls.Add(Me.CurDLProgress)
         Me.CurDLPanel.Controls.Add(Me.CurDLCancel)
         Me.CurDLPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.CurDLPanel.Location = New System.Drawing.Point(260, 26)
+        Me.CurDLPanel.Location = New System.Drawing.Point(257, 26)
         Me.CurDLPanel.Name = "CurDLPanel"
-        Me.CurDLPanel.Size = New System.Drawing.Size(419, 69)
+        Me.CurDLPanel.Size = New System.Drawing.Size(422, 69)
         Me.CurDLPanel.TabIndex = 5
         '
         'DLQueuedVidsBtn
@@ -585,7 +585,7 @@ Partial Class MainForm
         Me.CurDLProgress.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CurDLProgress.Location = New System.Drawing.Point(2, 0)
         Me.CurDLProgress.Name = "CurDLProgress"
-        Me.CurDLProgress.Size = New System.Drawing.Size(417, 36)
+        Me.CurDLProgress.Size = New System.Drawing.Size(420, 36)
         Me.CurDLProgress.TabIndex = 4
         Me.CurDLProgress.Text = "No video downloading (-_-')"
         Me.CurDLProgress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -595,7 +595,7 @@ Partial Class MainForm
         Me.CurDLCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.CurDLCancel.Font = New System.Drawing.Font("Arial", 9.0!)
         Me.CurDLCancel.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.CurDLCancel.Location = New System.Drawing.Point(344, 39)
+        Me.CurDLCancel.Location = New System.Drawing.Point(347, 39)
         Me.CurDLCancel.Name = "CurDLCancel"
         Me.CurDLCancel.Size = New System.Drawing.Size(75, 23)
         Me.CurDLCancel.TabIndex = 3
