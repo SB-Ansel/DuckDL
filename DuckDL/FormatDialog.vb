@@ -32,7 +32,6 @@ Public Class FormatDialog
         Console.WriteLine("DuckDl-FormatDialog: > Available Formats!")
         ' This call is required by the designer.
         InitializeComponent()
-
         ' Add any initialization after the InitializeComponent() call.
         Console.WriteLine(url)
         Dim fmtOutput As String = MainForm.GetVideoInfo("--list-formats", url, "Finding available formats...")
@@ -43,16 +42,20 @@ Public Class FormatDialog
         Dim fmt As Format
         For Each fmtLine As String In fmtLines
             fmtLine = Regex.Replace(fmtLine, "([[]\w.*|format code.*)", "") ' Select everything with [ in the name and delete!
+            'Console.WriteLine(fmtLine)
             fmtLine = fmtLine.TrimStart
             details = fmtLine
             fmtLine = Regex.Replace(fmtLine, "([.?\s])+", "*") ' YACK! remove those spaces so we can insert our own delimiter {*}
+            'Console.WriteLine(fmtLine)
             If fmtLine.Length <> 0 Then
                 formatcode = Regex.Replace(fmtLine, "([\*]).*", "")
+                'Console.WriteLine(formatcode)
                 fmt = New Format With {
                 .FormatCode = formatcode,
                 .Details = details}
                 Formats.Add(fmt)
             End If
+            'Console.WriteLine(formatcode)
         Next
     End Sub
     Private Sub OK_Button_Click(ByVal sender As Object, ByVal e As EventArgs) Handles OK_Button.Click

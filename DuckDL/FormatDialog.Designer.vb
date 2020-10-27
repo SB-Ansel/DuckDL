@@ -50,7 +50,7 @@ Partial Class FormatDialog
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(406, 378)
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(528, 378)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 1
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
@@ -90,12 +90,15 @@ Partial Class FormatDialog
         '
         'FormatList
         '
+        Me.FormatList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.FormatList.Font = New System.Drawing.Font("Segoe UI", 8.25!)
         Me.FormatList.FormattingEnabled = True
         Me.FormatList.HorizontalScrollbar = True
         Me.FormatList.Location = New System.Drawing.Point(15, 148)
         Me.FormatList.Name = "FormatList"
-        Me.FormatList.Size = New System.Drawing.Size(576, 212)
+        Me.FormatList.Size = New System.Drawing.Size(698, 212)
         Me.FormatList.TabIndex = 2
         '
         'Label4
@@ -178,7 +181,7 @@ Partial Class FormatDialog
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(606, 419)
+        Me.ClientSize = New System.Drawing.Size(728, 419)
         Me.Controls.Add(Me.BestAudio_CheckBox)
         Me.Controls.Add(Me.BestQuality_CheckBox)
         Me.Controls.Add(Me.LinkLabel1)
@@ -189,10 +192,10 @@ Partial Class FormatDialog
         Me.Controls.Add(Me.FormatList)
         Me.Controls.Add(Me.PromptLabel)
         Me.Controls.Add(Me.TableLayoutPanel1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
+        Me.MinimumSize = New System.Drawing.Size(744, 458)
         Me.Name = "FormatDialog"
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent

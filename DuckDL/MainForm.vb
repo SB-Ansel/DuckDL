@@ -20,6 +20,7 @@ Public Class MainForm
     Public Shared ReadOnly LibraryLocation As String = My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\DuckDL"
     Public Shared ReadOnly QueueLocation As String = LibraryLocation & "\_q.ddq"
     Public Shared ReadOnly Downloader As String = Application.StartupPath() & "\youtube-dl.exe"
+    Public Property YouTubeDLArguments As String
 
     ReadOnly VideoQueue As New Queue(Of VideoDownload)
     Dim Downloading As Boolean = False
@@ -153,7 +154,6 @@ Public Class MainForm
         CurDLCancel.Enabled = False
         UpdateDLButton()
         GetDownloadedVideos()
-        'Mainform - version label
         Dim versionlabel = Assembly.GetExecutingAssembly().GetName().Version.ToString
         Duck_Version.Text = versionlabel
     End Sub
@@ -248,6 +248,7 @@ Public Class MainForm
 
     Dim dldr As Process
     Dim curDL As VideoDownload
+
     Sub DownloadVideo(v2d As VideoDownload)
         curDL = v2d
         Dim formatString As String = "DEADBEEF"
@@ -261,7 +262,9 @@ Public Class MainForm
         End If
         If curDL.Format = FORMAT_BEST Then
             Console.WriteLine("Logging best")
-            formatString = " -f best "
+            ' SB-Ansel - Attempts to download bestvideo, failing that it will choose another format.
+            formatString = " -f bestvideo[height<=?720]+bestaudio/best "
+            'formatString = " -f best "
         End If
         If curDL.Format = FORMAT_BESTAUDIO Then
             formatString = " -f bestaudio "
@@ -276,44 +279,30 @@ Public Class MainForm
             formatString = " -f " & curDL.Format & " "
             Console.WriteLine(formatString)
         End If
-        Console.WriteLine("############################")
         Console.WriteLine(curDL.Url)
         If DomainName(curDL.Url) = "reddit" Then
-            Downloading = True
-            CurDLCancel.Enabled = True
-            dldr = New Process
-            dldr.StartInfo.FileName = Downloader
-            dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.{RedditURL(curDL.Url)}.%(ext)s"
-            dldr.StartInfo.UseShellExecute = False
-            dldr.StartInfo.RedirectStandardOutput = True
-            dldr.StartInfo.WorkingDirectory = LibraryLocation
-            dldr.StartInfo.CreateNoWindow = True
-            AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
-            'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
-            dldr.Start()
-            dldr.BeginOutputReadLine()
-            LifeCheck.Enabled = True
+            YouTubeDLArguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.{RedditURL(curDL.Url)}.%(ext)s"
         Else
-            Downloading = True
-            CurDLCancel.Enabled = True
-            dldr = New Process
-            dldr.StartInfo.FileName = Downloader
-            ' Make this a variable then change depending on whether or not it's reddit or others, saves lines.
-            dldr.StartInfo.Arguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
-            'Console.WriteLine(dldr.StartInfo.Arguments)
-            'Debugger.Break()
-            dldr.StartInfo.UseShellExecute = False
-            dldr.StartInfo.RedirectStandardOutput = True
-            dldr.StartInfo.WorkingDirectory = LibraryLocation
-            dldr.StartInfo.CreateNoWindow = True
-            AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
-            'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
-            dldr.Start()
-            dldr.BeginOutputReadLine()
-            LifeCheck.Enabled = True
+            YouTubeDLArguments = $"{formatString}-c {curDL.Url} -o {DomainName(curDL.Url)}.%(title)s.%(format_id)s.%(id)s.%(ext)s"
         End If
-
+        Downloading = True
+        CurDLCancel.Enabled = True
+        dldr = New Process
+        dldr.StartInfo.FileName = Downloader
+        'Console.WriteLine(dldr.StartInfo.Arguments)
+        'Debugger.Break()
+        dldr.StartInfo.Arguments = YouTubeDLArguments
+        dldr.StartInfo.UseShellExecute = False
+        dldr.StartInfo.RedirectStandardOutput = True
+        dldr.StartInfo.WorkingDirectory = LibraryLocation
+        dldr.StartInfo.CreateNoWindow = True
+        AddHandler dldr.OutputDataReceived, AddressOf DLProgressUpdate
+        'AddHandler dldr.Exited, AddressOf DownloadDone DOESN'T WORK no fucking idea
+        dldr.Start()
+        dldr.BeginOutputReadLine()
+        LifeCheck.Enabled = True
     End Sub
+
     Dim DownloadLog As String = ""
     Private Sub DLProgressUpdate(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         _DLProgressUpdate(e.Data)
@@ -435,6 +424,8 @@ Public Class MainForm
 
     'SB-Ansel - Function GetVideoInfo, retrieves video info from youtube-dl to populate the avalable file formats window.
     Private Shared InfOut As Text.StringBuilder = Nothing
+
+
     Public Function GetVideoInfo(ByVal args As String, ByVal url As String, Optional ByVal progressTxt As String = "Downloading information...") As String
         InfOut = New Text.StringBuilder()
         Dim NewProcess As New Process()
@@ -597,9 +588,16 @@ NextLine:
     End Function
     Private Sub LifeCheck_Tick(sender As Object, e As EventArgs) Handles LifeCheck.Tick
         If dldr.HasExited Then
+            Downloading = False
+            CurDLCancel.Enabled = False
             LifeCheck.Enabled = False
             MsgBox("Failed to download video: " & vbNewLine & curDL.Name & vbNewLine & curDL.Url & vbNewLine & "In format: " & curDL.Format, MsgBoxStyle.OkOnly + MsgBoxStyle.Exclamation, "DuckDL - Error!")
-            DownloadDone()
+            ' SB-Ansel - Return failed download to queue!
+            AddVideoToQueue(New VideoDownload(curDL.Url, GetVideoName(curDL.Url), curDL.Format))
+            CurDLProgress.Text = "Download failed :("
+            Console.WriteLine("")
+            'DownloadDone()
+            GetDownloadedVideos()
         End If
     End Sub
     ' SB-Ansel - Play video using system assocations.
